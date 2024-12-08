@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Interactable : MonoBehaviour
@@ -15,30 +12,27 @@ public class Interactable : MonoBehaviour
     [SerializeField] private float pickupRange = 4.0f;
     [SerializeField] private float pickupForce = 150.0f;
 
-   
     private void Update()
     {
-               
-            if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            if (heldObj == null)
             {
-                if (heldObj == null)
+                RaycastHit hit;
+                if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, pickupRange))
                 {
-                    RaycastHit hit;
-                    if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, pickupRange))
-                    {
-                        PickupObject(hit.transform.gameObject);
-                    }
-                }
-                else
-                {
-                    DropObject();
+                    if (hit.transform.gameObject.GetComponent<Red>()) PickupObject(hit.transform.gameObject);
                 }
             }
-            if (heldObj != null)
+            else
             {
-                MoveObject();
+                DropObject();
             }
-                
+        }
+        if (heldObj != null)
+        {
+            MoveObject();
+        }
     }
 
     void MoveObject()
@@ -73,5 +67,4 @@ public class Interactable : MonoBehaviour
         heldObj.transform.parent = null;
         heldObj = null;
     }
-  
 }

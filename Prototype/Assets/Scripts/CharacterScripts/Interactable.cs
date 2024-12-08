@@ -1,7 +1,13 @@
 using UnityEngine;
+/// <summary>
+/// Thamnopoulos Thanos 2024
+/// 
+/// Makes Red Objects Interactable by the Player with the E Key.
+/// </summary>
 
 public class Interactable : MonoBehaviour
 {
+    //Assigning Vars...
     [Header("Pickup Setting")]
     [SerializeField] Transform holdArea;
 
@@ -14,6 +20,7 @@ public class Interactable : MonoBehaviour
 
     private void Update()
     {
+        // Interaction will happen upon pressing the Key E...
         if (Input.GetKeyDown(KeyCode.E))
         {
             if (heldObj == null)
@@ -21,6 +28,7 @@ public class Interactable : MonoBehaviour
                 RaycastHit hit;
                 if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, pickupRange))
                 {
+                    // Checking if the object has the Red component to make it interactable...
                     if (hit.transform.gameObject.GetComponent<Red>()) PickupObject(hit.transform.gameObject);
                 }
             }

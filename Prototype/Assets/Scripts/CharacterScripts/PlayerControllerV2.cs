@@ -1,6 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+/// <summary>
+/// Thamnopoulos Thanos 2024
+/// 
+/// Basic Player Controller.
+/// </summary>
 
 public class PlayerController : MonoBehaviour
 {

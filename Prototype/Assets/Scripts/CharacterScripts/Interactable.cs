@@ -26,7 +26,7 @@ public class Interactable : MonoBehaviour
             if (heldObj == null)
             {
                 RaycastHit hit;
-                if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, pickupRange))
+                if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.TransformDirection(Vector3.forward), out hit, pickupRange))
                 {
                     // Checking if the object has the Red component to make it interactable...
                     if (hit.transform.gameObject.GetComponent<Red>()) PickupObject(hit.transform.gameObject);

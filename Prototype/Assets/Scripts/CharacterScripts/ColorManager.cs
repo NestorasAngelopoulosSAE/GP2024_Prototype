@@ -11,22 +11,22 @@ using UnityEngine;
 [System.Serializable]
 public struct GameplayColor
 {
+    public KeyCode keybind;
     public Material material;
     public GameObject coloredObject;
 }
 
 public class ColorManager : MonoBehaviour
 {
+    [Tooltip("Makes it possible to paint over a previously painted surface, overriding its function.")]
+    public bool overrideColors;
+
     public int selectedColor;
     
     public GameplayColor[] GameplayColors;
 
-    List<KeyCode> numberKeys = new List<KeyCode>
-    {
-        KeyCode.Alpha1,
-        KeyCode.Alpha2,
-        KeyCode.Alpha3,
-    };
+    [Tooltip("The material to be applied to objects when their color is removed.")]
+    public Material colorableMaterial;
 
     void Update()
     {
@@ -41,30 +41,38 @@ public class ColorManager : MonoBehaviour
             selectedColor--;
             if (selectedColor < 0) selectedColor = GameplayColors.Length - 1;
         }
-        // Switch selectedColor on number press (1,2,3)
-        foreach (var key in numberKeys) 
+        // Switch selectedColor with keybind
+        for (int i = 0; i < GameplayColors.Length; i++)
         {
-            if (Input.GetKeyDown(key)) selectedColor = numberKeys.IndexOf(key);
+            if (Input.GetKeyDown(GameplayColors[i].keybind)) selectedColor = i;
         }
         
         //Color object when left click is presesd
         if (Input.GetMouseButtonDown(0))
         {
-            // Shoot a ray of infinite length forward and change its color if it's colorable
+            // If colorable, change the color of the object the player is looking at
             RaycastHit hit;
             if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity))
             {
                 if (hit.collider.gameObject.tag == "Colorable")
                 {
-                    // Clear any color that the hit object may have
-                    for (int i = 0; i < GameplayColors.Length; i++)
+                    if (hit.collider.gameObject != GameplayColors[selectedColor].coloredObject)
                     {
-                        if (hit.collider.gameObject == GameplayColors[i].coloredObject) RemoveColor(i);
-                    }
-                    // Check if another object already has this color and if so clear it
-                    if (GameplayColors[selectedColor].coloredObject != null && hit.collider.gameObject != GameplayColors[selectedColor].coloredObject)
-                    {
-                        RemoveColor(selectedColor);
+                        // Clear any color that the hit object may have
+                        for (int i = 0; i < GameplayColors.Length; i++)
+                        {
+                            if (hit.collider.gameObject == GameplayColors[i].coloredObject)
+                            {
+                                if (!overrideColors) return;
+                                RemoveColor(i);
+                            }
+                        }
+                        // Check if another object already has this color and if so clear it
+                        if (GameplayColors[selectedColor].coloredObject != null)
+                        {
+                            if (!overrideColors) return;
+                            RemoveColor(selectedColor);
+                        }
                     }
 
                     GameplayColors[selectedColor].coloredObject = hit.collider.gameObject;
@@ -81,7 +89,8 @@ public class ColorManager : MonoBehaviour
 
         // Set object's material to Unity's default material and forget it
         GameplayColor defaultColor = new GameplayColor();
-        defaultColor.material = new Material(Shader.Find("Diffuse"));
+        if (colorableMaterial != null) defaultColor.material = colorableMaterial;
+        else defaultColor.material = new Material(Shader.Find("Diffuse"));
         GameplayColors[index].coloredObject.GetComponent<Colorable>().SetColor(defaultColor);
         GameplayColors[index].coloredObject = null;
     }

@@ -1,7 +1,7 @@
 /// <summary>
 /// Thamnopoulos Thanos 2024
-/// 
-///
+/// Makes objects holdable
+/// Red : )
 /// </summary>
 
 using UnityEngine;

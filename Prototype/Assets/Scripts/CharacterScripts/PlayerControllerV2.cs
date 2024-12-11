@@ -47,7 +47,7 @@ public class PlayerController : MonoBehaviour
 
         characterController.center = Vector3.up;
 
-        mainCamera.position += Vector3.up * 1.8f;
+       // mainCamera.position += Vector3.up * 1.8f;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;

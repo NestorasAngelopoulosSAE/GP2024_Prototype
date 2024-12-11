@@ -1,11 +1,10 @@
-using System;
-using Unity.VisualScripting;
-using UnityEngine;
 /// <summary>
 /// Thamnopoulos Thanos 2024
 /// 
 ///
 /// </summary>
+
+using UnityEngine;
 
 public class Red : MonoBehaviour
 {
@@ -19,7 +18,6 @@ public class Red : MonoBehaviour
        
     private float pickupRange = 2.0f;
     
-
 
     void Start()
     {
@@ -40,7 +38,6 @@ public class Red : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            
             if (isHeld)
             {
                 DropObject();
@@ -59,7 +56,6 @@ public class Red : MonoBehaviour
 
             }
         }
-        
     }
 
     private void FixedUpdate()
@@ -68,7 +64,6 @@ public class Red : MonoBehaviour
         {
             Move();
         }
-        
     }
 
     private void PickupObject()
@@ -79,7 +74,6 @@ public class Red : MonoBehaviour
         thisRB.constraints = RigidbodyConstraints.FreezeRotation;
         thisRB.useGravity = false;
         gameObject.layer = LayerMask.NameToLayer("Held Object");
-
     }
 
     private void DropObject()
@@ -89,15 +83,16 @@ public class Red : MonoBehaviour
         thisRB.constraints = RigidbodyConstraints.None;
         thisRB.useGravity = true;
         gameObject.layer = LayerMask.NameToLayer("Default");
-
     }
 
     private void Move()
     {
+        if (Vector3.Distance(transform.position, holdArea.position) > 5f) DropObject();
         float moveSpeed = 5.0f;
-        transform.position = Vector3.Lerp(transform.position, holdArea.position, Time.deltaTime * moveSpeed);
-        transform.rotation = Quaternion.Slerp(transform.rotation, Camera.main.transform.rotation, Time.deltaTime * moveSpeed); ;
-        
 
+        if (Physics.Raycast(transform.position, holdArea.position, Vector3.Distance(transform.position, Vector3.Lerp(transform.position, holdArea.position, Time.deltaTime * moveSpeed)), LayerMask.NameToLayer("Held Object") | LayerMask.NameToLayer("Player"))) return; // This if statement was brought to you by Nestoras. It raycasts to the next position (ignoring the player and this object) and cancels the move if that path is blocked.
+
+        transform.position = Vector3.Lerp(transform.position, holdArea.position, Time.deltaTime * moveSpeed);
+        transform.rotation = Quaternion.Slerp(transform.rotation, Camera.main.transform.rotation, Time.deltaTime * moveSpeed);
     }
 }

@@ -90,9 +90,16 @@ public class Red : MonoBehaviour
         if (Vector3.Distance(transform.position, holdArea.position) > 5f) DropObject();
         float moveSpeed = 5.0f;
 
-        if (Physics.Raycast(transform.position, holdArea.position, Vector3.Distance(transform.position, Vector3.Lerp(transform.position, holdArea.position, Time.deltaTime * moveSpeed)), LayerMask.NameToLayer("Held Object") | LayerMask.NameToLayer("Player"))) return; // This if statement was brought to you by Nestoras. It raycasts to the next position (ignoring the player and this object) and cancels the move if that path is blocked.
+        // Nestoras Cameo: Raycasts to the next position (ignoring the player and this object) and moves to the collision point instead of the holdArea. This avoids clipping and jittering.
+        if (Physics.Raycast(transform.position, holdArea.position - transform.position, out RaycastHit hit, Vector3.Distance(transform.position, holdArea.position), LayerMask.NameToLayer("Held Object") | LayerMask.NameToLayer("Player")))
+        {
+            transform.position = Vector3.Lerp(transform.position, hit.point, Time.deltaTime * moveSpeed);
+        }
+        else
+        {
+            transform.position = Vector3.Lerp(transform.position, holdArea.position, Time.deltaTime * moveSpeed);
+        }
 
-        transform.position = Vector3.Lerp(transform.position, holdArea.position, Time.deltaTime * moveSpeed);
         transform.rotation = Quaternion.Slerp(transform.rotation, Camera.main.transform.rotation, Time.deltaTime * moveSpeed);
     }
 }

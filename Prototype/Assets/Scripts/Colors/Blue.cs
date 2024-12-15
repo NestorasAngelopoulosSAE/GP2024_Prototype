@@ -1,10 +1,12 @@
+using UnityEditor;
 using UnityEngine;
 
 public class Blue : MonoBehaviour
 {
+   [SerializeField] public float speed = 2f;
     void Start()
     {
-        Debug.Log($"{gameObject.name} is Blue!");
+        Debug.Log($"{gameObject.name} is Blue!");   
     }
 
     public void OnDisable()
@@ -14,6 +16,6 @@ public class Blue : MonoBehaviour
 
     void Update()
     {
-        
+        transform.Translate(Vector3.forward * speed * Time.deltaTime);
     }
 }

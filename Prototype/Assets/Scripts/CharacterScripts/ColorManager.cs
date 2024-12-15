@@ -5,7 +5,6 @@
 /// Handles input and raycasting for coloring objects
 /// </summary>
 
-using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
@@ -28,8 +27,11 @@ public class ColorManager : MonoBehaviour
     [Tooltip("The material to be applied to objects when their color is removed.")]
     public Material colorableMaterial;
 
+    public Animator brushAnimator;
+
     void Update()
     {
+        int prevSelection = selectedColor;
         // Switch selectedColor on scroll (also handle overflow/underflow)
         if (Input.GetAxis("Mouse ScrollWheel") > 0f) // forward
         {
@@ -46,10 +48,13 @@ public class ColorManager : MonoBehaviour
         {
             if (Input.GetKeyDown(GameplayColors[i].keybind)) selectedColor = i;
         }
-        
+        if (selectedColor != prevSelection) brushAnimator.SetTrigger("Change");
+
         //Color object when left click is presesd
         if (Input.GetMouseButtonDown(0))
         {
+            brushAnimator.SetTrigger("Apply");
+
             // If colorable, change the color of the object the player is looking at
             RaycastHit hit;
             if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity))
@@ -80,7 +85,11 @@ public class ColorManager : MonoBehaviour
                 }
             }
         }
-        else if (Input.GetMouseButtonDown(1)) RemoveColor(selectedColor); // Remove color from object when right click is presesd
+        else if (Input.GetMouseButtonDown(1))
+        {
+            RemoveColor(selectedColor); // Remove color from object when right click is presesd
+            brushAnimator.SetTrigger("Remove");
+        }
     }
 
     void RemoveColor(int index) // Clear color from curently colored object
@@ -92,6 +101,6 @@ public class ColorManager : MonoBehaviour
         if (colorableMaterial != null) defaultColor.material = colorableMaterial;
         else defaultColor.material = new Material(Shader.Find("Diffuse"));
         GameplayColors[index].coloredObject.GetComponent<Colorable>().SetColor(defaultColor);
-        GameplayColors[index].coloredObject = null;
+        GameplayColors[index].coloredObject = null;        
     }
 }

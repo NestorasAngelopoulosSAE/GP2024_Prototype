@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class Blue : MonoBehaviour
 {
-    [SerializeField] public float speed = 20f;
+    [SerializeField] public float speed = 8f;
     Vector3 moveDirection;
     Rigidbody RB;
-      
+        
     void Start()
     {
         Debug.Log($"{gameObject.name} is Blue!");
@@ -22,6 +22,6 @@ public class Blue : MonoBehaviour
 
     void Update()
     {             
-        transform.position += moveDirection.normalized * Time.deltaTime;
-    }
+        transform.position += moveDirection.normalized * Time.deltaTime * speed;
+    } 
 }

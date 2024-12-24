@@ -39,6 +39,8 @@ public class PlayerController : MonoBehaviour
     Vector3 direction;
     Vector3 jumpDirection = Vector3.zero;
 
+    UIManager uiManager;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -51,11 +53,15 @@ public class PlayerController : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        uiManager = GameObject.FindGameObjectWithTag("Gameplay Manager").GetComponent<UIManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (uiManager.isPaused) return;
+
         isGrounded = characterController.isGrounded;
 
         //inputs

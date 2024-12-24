@@ -40,7 +40,7 @@ public class Button : MonoBehaviour
             if (ThingsOnMyButton  == 0)
             {
                 onButtonPressed.Invoke();
-                Debug.Log("Button Pressed" + other.gameObject.name);             
+                //Debug.Log("Button Pressed by " + other.gameObject.name);             
             }
             ThingsOnMyButton++;
         }
@@ -57,7 +57,7 @@ public class Button : MonoBehaviour
             if (ThingsOnMyButton == 0)
             {               
                 onButtonReleased.Invoke();
-                Debug.Log("Button Released" + other.gameObject.name);               
+                //Debug.Log("Button Released by " + other.gameObject.name);               
             }               
         }
     }     

@@ -15,7 +15,7 @@ public class Green : MonoBehaviour
 
     void Start()
     {
-        Debug.Log($"{gameObject.name} is Green!");
+        //Debug.Log($"{gameObject.name} is Green!");
         rb = GetComponent<Rigidbody>();
 
         storedVelocity = rb.velocity;
@@ -25,7 +25,7 @@ public class Green : MonoBehaviour
 
     public void OnDisable()
     {
-        Debug.Log($"{gameObject.name} is no longer Green!");
+        //Debug.Log($"{gameObject.name} is no longer Green!");
 
         rb.isKinematic = false;
         rb.velocity = storedVelocity;

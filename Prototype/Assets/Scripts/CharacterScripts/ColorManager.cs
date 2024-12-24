@@ -29,8 +29,17 @@ public class ColorManager : MonoBehaviour
 
     public Animator brushAnimator;
 
+    UIManager uiManager;
+
+    private void Start()
+    {
+        uiManager = GetComponent<UIManager>();
+    }
+
     void Update()
     {
+        if (uiManager.isPaused) return;
+
         int prevSelection = selectedColor;
         // Switch selectedColor on scroll (also handle overflow/underflow)
         if (Input.GetAxis("Mouse ScrollWheel") > 0f) // forward

@@ -17,25 +17,30 @@ public class Red : MonoBehaviour
     bool isHeld;
        
     private float pickupRange = 2.0f;
-    
+
+    UIManager uiManager;
 
     void Start()
     {
+        //Debug.Log($"{gameObject.name} is Red!");
+
         holdArea = GameObject.Find("Range").transform;
 
         thisRB = GetComponent<Rigidbody>();
-       
-        Debug.Log($"{gameObject.name} is Red!");
+
+        uiManager = GameObject.FindGameObjectWithTag("Gameplay Manager").GetComponent<UIManager>();
     }
 
     public void OnDisable()
     {
-        Debug.Log($"{gameObject.name} is no longer Red!");
+        //Debug.Log($"{gameObject.name} is no longer Red!");
         DropObject();
     }
 
     void Update()
     {
+        if (uiManager.isPaused) return;
+
         if (Input.GetKeyDown(KeyCode.E))
         {
             if (isHeld)
@@ -59,7 +64,9 @@ public class Red : MonoBehaviour
     }
 
     private void FixedUpdate()
-    { 
+    {
+        if (uiManager.isPaused) return;
+
         if (isHeld == true) 
         {
             Move();

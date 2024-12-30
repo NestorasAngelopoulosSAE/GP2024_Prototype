@@ -5,11 +5,13 @@
 /// Handles input and raycasting for coloring objects
 /// </summary>
 
+using UnityEditor.ShaderGraph;
 using UnityEngine;
 
 [System.Serializable]
 public struct GameplayColor
 {
+    public bool unlocked;
     public KeyCode keybind;
     public Material material;
     public GameObject coloredObject;
@@ -17,8 +19,11 @@ public struct GameplayColor
 
 public class ColorManager : MonoBehaviour
 {
-    [Tooltip("Makes it possible to paint over a previously painted surface, overriding its function.")]
+    [Tooltip("(Recommended)\nMakes it possible to paint over a previously painted surface, overriding its function.")]
     public bool overrideColors;
+
+    [Tooltip("When enabled, blue movement is based on the orientation of the colorable object, and the position of the player with regards to it.\n\n(Recommended)\nWhen disabled, the object can only move towards the world space X and Z axis. The direction is determined not by the player's position, but the direction the player is facing.")]
+    public bool allowBlueVertical;
 
     public int selectedColor;
     
@@ -34,28 +39,63 @@ public class ColorManager : MonoBehaviour
     private void Start()
     {
         uiManager = GetComponent<UIManager>();
+        
+        // Begin the level with the first unlocked color on the brush. If no color is unlocked, leave the brush dry.
+        selectedColor = -1;
+        for (int i = 0; i < GameplayColors.Length; i++)
+        {
+            if (GameplayColors[i].unlocked)
+            {
+                selectedColor = i;
+                brushAnimator.gameObject.GetComponent<BrushController>().ChangeColor();
+                break;
+            }
+        }
     }
 
     void Update()
     {
-        if (uiManager.isPaused) return;
+        if (uiManager.isPaused) return; // Don't take input if the game is paused.
+
+        if (selectedColor == -1)
+        {
+            // Check if a color was unlocked.
+            for (int i = 0; i < GameplayColors.Length; i++)
+            {
+                if (GameplayColors[i].unlocked)
+                {
+                    selectedColor = i;
+                    brushAnimator.gameObject.GetComponent<BrushController>().ChangeColor();
+                    break;
+                }
+            }
+            return; // Don't bother checking for input if the player hasn't unlocked any color yet.
+        }
 
         int prevSelection = selectedColor;
         // Switch selectedColor on scroll (also handle overflow/underflow)
-        if (Input.GetAxis("Mouse ScrollWheel") > 0f) // forward
+        if (Input.GetAxis("Mouse ScrollWheel") > 0f && GameplayColors[selectedColor].unlocked) // forward
         {
-            selectedColor++;
-            if (selectedColor >= GameplayColors.Length) selectedColor = 0;
+            do
+            {
+                selectedColor++;
+                if (selectedColor >= GameplayColors.Length) selectedColor = 0;
+            }
+            while (!GameplayColors[selectedColor].unlocked);
         }
-        else if (Input.GetAxis("Mouse ScrollWheel") < 0f) // backwards
+        else if (Input.GetAxis("Mouse ScrollWheel") < 0f && GameplayColors[selectedColor].unlocked) // backwards
         {
-            selectedColor--;
-            if (selectedColor < 0) selectedColor = GameplayColors.Length - 1;
+            do
+            {
+                selectedColor--;
+                if (selectedColor < 0) selectedColor = GameplayColors.Length - 1;
+            }
+            while (!GameplayColors[selectedColor].unlocked);
         }
         // Switch selectedColor with keybind
         for (int i = 0; i < GameplayColors.Length; i++)
         {
-            if (Input.GetKeyDown(GameplayColors[i].keybind)) selectedColor = i;
+            if (Input.GetKeyDown(GameplayColors[i].keybind) && GameplayColors[i].unlocked) selectedColor = i;
         }
         if (selectedColor != prevSelection) brushAnimator.SetTrigger("Change");
 

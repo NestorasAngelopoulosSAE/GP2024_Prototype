@@ -14,7 +14,7 @@ public class Red : MonoBehaviour
     
     private Rigidbody thisRB;
     private float Mass;
-    bool isHeld;
+    [HideInInspector] public bool isHeld;
        
     private float pickupRange = 2.0f;
 
@@ -94,6 +94,8 @@ public class Red : MonoBehaviour
 
     private void Move()
     {
+        transform.parent = null;
+
         if (Vector3.Distance(transform.position, holdArea.position) > 5f) DropObject();
         float moveSpeed = 5.0f;
 

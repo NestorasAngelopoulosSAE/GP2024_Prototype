@@ -11,12 +11,12 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Held Object
+  - View Model
   - Water
   - UI
-  - Player
-  - View Model
-  - Button
+  - Held Object
+  - 
+  - 
   - 
   - 
   - 

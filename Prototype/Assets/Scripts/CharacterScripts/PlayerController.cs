@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
 /// Thamnopoulos Thanos 2024
@@ -91,6 +89,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            transform.SetParent(null, true); // Make sure the player is off any moving platform.
             moveDirection *= airControl;
         }
 

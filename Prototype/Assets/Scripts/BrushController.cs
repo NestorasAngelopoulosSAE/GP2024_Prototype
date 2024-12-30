@@ -20,7 +20,8 @@ public class BrushController : MonoBehaviour
     private void Start()
     {
         colorManager = GameObject.FindGameObjectWithTag("Gameplay Manager").GetComponent<ColorManager>();
-        ChangeColor();
+        if (!Crosshair) Crosshair = GameObject.Find("Crosshair").GetComponent<Image>();
+        //ChangeColor();
     }
 
     void Update()

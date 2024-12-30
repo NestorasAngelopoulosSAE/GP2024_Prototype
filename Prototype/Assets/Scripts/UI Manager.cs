@@ -32,12 +32,11 @@ public class UIManager : MonoBehaviour
         isPaused = !isPaused;
         if (isPaused)
         {
-            // Redundant due to Time Scale
-            //Player.GetComponentInChildren<Animator>().enabled = false; // Stop brush animation
-            //brushPhysicsDeltaTime = Player.GetComponentInChildren<EZSoftBone>().constantDeltaTime;
-            //Player.GetComponentInChildren<EZSoftBone>().constantDeltaTime = 0f; // Stop brush physics
-
             Time.timeScale = 0f;
+
+            Player.GetComponentInChildren<Animator>().enabled = false; // Stop brush animation
+            brushPhysicsDeltaTime = Player.GetComponentInChildren<EZSoftBone>().constantDeltaTime;
+            Player.GetComponentInChildren<EZSoftBone>().constantDeltaTime = 0f; // Stop brush physics
 
             PauseMenu.SetActive(true);
             Player.GetComponent<PlayerController>().enabled = false;
@@ -45,11 +44,10 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            // Redundant due to Time Scale
-            //Player.GetComponentInChildren<Animator>().enabled = true; // Resume brush Animation
-            //Player.GetComponentInChildren<EZSoftBone>().constantDeltaTime = brushPhysicsDeltaTime; // Resume brush Physics
-
             Time.timeScale = 1f;
+
+            Player.GetComponentInChildren<Animator>().enabled = true; // Resume brush Animation
+            Player.GetComponentInChildren<EZSoftBone>().constantDeltaTime = brushPhysicsDeltaTime; // Resume brush Physics
 
             PauseMenu.SetActive(false);
             Player.GetComponent<PlayerController>().enabled = true;

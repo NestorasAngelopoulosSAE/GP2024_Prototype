@@ -5,6 +5,7 @@
 /// Once unfrozen, the object regains its velocity.
 /// </summary>
 
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Green : MonoBehaviour
@@ -18,8 +19,10 @@ public class Green : MonoBehaviour
         //Debug.Log($"{gameObject.name} is Green!");
         rigidBody = GetComponent<Rigidbody>();
 
-        // Lift object so it doesn't overlap with a moving platform.
-        if (transform.parent != null && transform.parent.gameObject.GetComponent<Blue>()) transform.position += Vector3.up * 0.01f;
+        if (transform.parent != null && transform.parent.gameObject.GetComponent<Blue>())
+        {
+            transform.position += Vector3.up * 0.01f; // Lift object so it doesn't overlap with a moving platform.
+        }
 
         storedVelocity = rigidBody.velocity;
         storedAngularVelocity = rigidBody.angularVelocity;

@@ -2,84 +2,123 @@
 /// Nestoras Angelopoulos 2024
 /// 
 /// Moves the object in the direction specified by the player.
+/// Does muutiple checks to determine when to flip the direction of movement.
+/// Contains helper functions used by PlatformRideTrigger and Obstacle.
+/// 
 /// When it hits a wall (or a series of obstacles that lead to a wall), it sends the object back.
+/// 
+/// Unfortunately, no single test covers all cases, so a combination of rigidbody sweep tests, 
+/// raycasts from each vertex of each object riding the platfomr, and a and closest point distance check is performed each FixedUpdate.
+/// 
+/// Two complementary scripts aid the functionality of the platform.
+/// 
+/// The Obstacle script is used to form a chain of objects that the platform is pushing in front of it.
+/// They each perform a sweep test to find immovable level geometry, and a closest point distance check to find the player.
+/// 
+/// The RideTrigger script adds any object that sits on the platform as a child object to the platform.
+/// It also works similarly to the Obstacle script in that it creates a stack of objects, each with its own trigger to check for more objects above it.
+/// 
 /// </summary>
 using UnityEngine;
 
 public class Blue : MonoBehaviour
 {
+    UIManager uiManager;
     ColorManager colorManager;
+    GameObject gameplayManager;
+
     GameObject player;
     Collider playerCollider;
 
+    Rigidbody rigidBody;
     Collider thisCollider;
     Collider triggerCollider;
-    Rigidbody rigidBody;
-    GameObject RideTriggerGameObject;
-    GameObject SweepTestObject;
-    Vector3 moveDirection;
+    RideTrigger rideTrigger;
 
+    public Vector3 moveDirection;
+    bool bouncedThisFrame;
+    
     float speed = 2f;
+
+    bool firstFrame = true;
 
     void Start()
     {
         //Debug.Log($"{gameObject.name} is Blue!");
 
-        colorManager = GameObject.FindGameObjectWithTag("Gameplay Manager").GetComponent<ColorManager>();
+        gameplayManager = GameObject.FindGameObjectWithTag("Gameplay Manager");
+        colorManager = gameplayManager.GetComponent<ColorManager>();
+        uiManager = gameplayManager.gameObject.GetComponent<UIManager>();
         player = GameObject.FindGameObjectWithTag("Player");
+        
+        thisCollider = GetComponent<Collider>();
         playerCollider = player.GetComponent<Collider>();
+        rigidBody = GetComponent<Rigidbody>();
 
-        // Lift object so it doesn't overlap with the floor. (Necessary in order to detect the floor as an obstacle when moving downwards.)
+        // Lift object so it doesn't overlap with the floor. (Helps with sweep test on top of weird geometries)
         transform.position += Vector3.up * 0.01f;
 
-        GetMoveDirection();
+        // Get direction of movement (a unit vector in local or world space, based on the selected option)
+        GetMoveDirection(); 
 
-        thisCollider = GetComponent<Collider>();
-        rigidBody = GetComponent<Rigidbody>();
+        // Stop the physics engine from applying forces to the object.
         rigidBody.isKinematic = true;
         rigidBody.useGravity = false;
 
         // Create a trigger on top of the platform, so that objects can ride it.
-        RideTriggerGameObject = new GameObject("Ride Trigger");
-        RideTriggerGameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-        RideTriggerGameObject.transform.position = transform.position;
-        RideTriggerGameObject.transform.rotation = transform.rotation;
-        RideTriggerGameObject.transform.localScale = transform.localScale * 0.95f; // Make trigger slightly smaller so that it doesn't trigger from the sides.
-
-        // Make new object follow this object.
-        RideTriggerGameObject.transform.parent = transform;
-
-        RideTriggerGameObject.AddComponent<PlatformRideTrigger>();
-
-        // Copy Collider over to trigger object;
-        triggerCollider = CopyCollider(thisCollider, RideTriggerGameObject);
-        triggerCollider.isTrigger = true;
-    }
-
-    void GetMoveDirection()
-    {
-        // Get direction of movement. (the direction opposite that to the player, snapped to the nearset axis in local or world space, based on the selected option)
-        if (colorManager.allowBlueVertical) moveDirection = transform.TransformDirection(NearestAxis(transform.InverseTransformDirection(transform.position - Camera.main.transform.position), true)).normalized;
-        else moveDirection = NearestAxis(Camera.main.transform.TransformDirection(Vector3.forward), false).normalized;
+        CreateRideTriggerObject(thisCollider, out rideTrigger);
     }
 
     private void OnDisable()
     {
-        // Detach all children
-        for (int i = transform.childCount - 1; i >= 0; i--)
-        {
-            transform.GetChild(i).SetParent(null, true);
-        }
+        //Debug.Log($"{gameObject.name} is no longer Green!");
 
-        Destroy(RideTriggerGameObject);
+        rideTrigger.Remove();
 
         rigidBody.isKinematic = false;
         rigidBody.useGravity = true;
     }
 
+    void GetMoveDirection()
+    {
+        if (colorManager.allowBlueVertical) // Local-space-aligned axess based on the position of the camera.
+        {
+            moveDirection = transform.TransformDirection(NearestAxis(transform.InverseTransformDirection(transform.position - Camera.main.transform.position), true)).normalized;
+        }
+        else // World-space-aligned axes based on the rotation of the camera.
+        {
+            moveDirection = NearestAxis(Camera.main.transform.TransformDirection(Vector3.forward), false).normalized;
+        }
+
+        // Performing a raycast test here lowers the chance of false negatives when moving towards a pushable object that is already touching the platform when the player directs it.
+        if (RayCastTest(-moveDirection, speed * Time.deltaTime * 2)) Bounce();
+    }
+
+    void FixedUpdate()
+    {
+        // To avoid the incomplete removal of a previous Ride Trigger stack, we need to wait a single frame from the color removal before moving a blue object again.
+        if (colorManager.overrideColors && firstFrame)
+        {
+            firstFrame = false;
+            return;
+        }
+
+        // SweepTest will include the colliders of child objects even when they are triggers.
+        // To only test for the platform collider and not any child collider, we create a new GameObject with the same collider, set it to trigger so that it doesn't interact with anything, and do the SweepTest from there.
+
+        // Create the test object and place it one step before the actual position of the platform, to ensure that the sweep test will recognize the collision.
+        Rigidbody sweepRigidBody = SweepTestRigidBody(thisCollider, moveDirection, speed);
+        CheckForObstacle(sweepRigidBody); // Check for obstacle using the new rigidbody for the sweep test. If any of the tests passes, flip moveDirection.
+        Destroy(sweepRigidBody.gameObject); // Destroy the test object.
+
+        transform.position += moveDirection * Time.deltaTime * speed; // Move the platform.
+    }
+
     private void Update()
     {
-        // Re-calculate the moveDirection every time the player clicks the platform.
+        if (uiManager.isPaused) return; // Don't take input if the game is paused.
+
+        // Re-calculate the moveDirection if the player clicks the platform.
         if (Input.GetMouseButtonDown(0))
         {
             if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.TransformDirection(Vector3.forward), out RaycastHit hit, Mathf.Infinity))
@@ -89,120 +128,115 @@ public class Blue : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+    void CheckForObstacle(Rigidbody rigidbody)
     {
-        // SweepTest will include the colliders of child objects even when they are triggers.
-        // To only test for the platform collider and not any child collider, we create a new GameObject with the same collider, set it to trigger so that it doesn't interact with anything, and do the SweepTest from there.
-        SweepTestObject = new GameObject("Sweep Test Object");
-        SweepTestObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-        Collider sweepCollider = CopyCollider(thisCollider, SweepTestObject);
-        sweepCollider.isTrigger = true;
-        Rigidbody sweepRigidBody = SweepTestObject.AddComponent<Rigidbody>();
-        sweepRigidBody.isKinematic = true;
-        // Copy its position to this object's position
-        SweepTestObject.transform.position = transform.position;
-        SweepTestObject.transform.rotation = transform.rotation;
-        SweepTestObject.transform.localScale = transform.localScale;
+        // |Sweep Test| Check if object is to collide with something on the next frame. (*2 because we moved the collider back a frame)
+        if (rigidbody.SweepTest(moveDirection, out RaycastHit hit, speed * Time.deltaTime * 2, QueryTriggerInteraction.Ignore))
+        {
+            // When platform collides with something that is movable, add it to the chain.
+            if (hit.collider.tag == "Colorable" &! hit.collider.gameObject.GetComponent<Green>())
+            {
+                // Add an Obstacle script to the object and let it create a chain of objects that are being pushed.
+                // Once one of them hits something immovable, a bounce command will propagate back through the chain, unlinking all obstacles in the process.
 
-        // Check for obstacle using the new rigidbody
-        CheckForObstacle(sweepRigidBody);
-        Destroy(SweepTestObject);
+                if (!hit.collider.gameObject.GetComponent<Obstacle>()) // Don't add another Obstacle script if it already has one.
+                {
+                    Obstacle obstacle = hit.collider.gameObject.AddComponent<Obstacle>();
+                    obstacle.first = true;
+                    obstacle.Platform = this;
+                    obstacle.moveDirection = moveDirection;
+                    obstacle.speed = speed;
+                }
+            }
+            else if (hit.collider.tag != "Player") Bounce(); // When it collides with something immovable, send the platform back.
+        }
 
-        transform.position += moveDirection * Time.deltaTime * speed;
-    }
+        // |Raycast Test| If we're going upwards, Raycast from all the vertices of each child, and if you hit something immovable, bounce.
+        if (transform.childCount > 1 && Vector3.Dot(moveDirection, Vector3.up) >= 0.01f && RayCastTest()) Bounce();
 
-    private void LateUpdate()
-    {
-        // Make sure the ride trigger is always on top of the object, regardless of orientation.
-        RideTriggerGameObject.transform.position = transform.position + Vector3.up * 0.3f;
+        // |Closest Point Distance Test| If the player is in front of the object, bounce. (handling this in the sweep test gave inconsistent results)
+        if (player.transform.parent != transform && MovingIntongCollider(thisCollider, playerCollider, moveDirection)) Bounce();
     }
 
     public void Bounce()
     {
+        if (bouncedThisFrame) return; // If multiple checks pass, don't toggle multiple times.
+
+        bouncedThisFrame = true;
         moveDirection *= -1f;
     }
-    
-    public void CheckForObstacle(Rigidbody rb)
+
+    private void LateUpdate()
     {
-        if (rb.SweepTest(moveDirection, out RaycastHit hit, speed * Time.deltaTime, QueryTriggerInteraction.Ignore))
+        bouncedThisFrame = false;
+    }
+
+    /// <summary>
+    /// Similar to SweepTest for all (non-trigger) objects moving with the platform, and without using collider overlaps.
+    /// This helps avoid clipping through colliders that were already touching the platform when the script started.
+    /// </summary>
+    bool RayCastTest()
+    {
+        return RayCastTest(Vector3.zero, speed * Time.deltaTime);
+    }
+
+    /// <summary>
+    /// Similar to SweepTest for all (non-trigger) objects moving with the platform, but without using collision events.
+    /// Casts rays from each vertex of all (non-trigger) child meshes. 
+    /// This helps avoid clipping through colliders that were already touching the platform when the script started.
+    /// </summary>
+    /// <param name="offset">An offset to apply to each vertex of each meshe before the raycast.</param>
+    /// <param name="distance">The maximum distance of each raycast.</param>
+    bool RayCastTest(Vector3 offset, float distance)
+    {
+        bool passed = false;
+
+        foreach (Collider childCollider in transform.GetComponentsInChildren<Collider>())
         {
-            // Check if object is to collide with something on the next frame.
+            Transform child = childCollider.transform;
+            if (child.gameObject == rideTrigger) continue; // For each child that isn't a trigger object,
 
-            // Known issue:
-            // When the platform is already colliding with something, SweepTest ignores that collision.
-            // Therefore, if the platform has already been pushed against a wall or another obstacle, the SweepTest will fail.
-            // This will cause the platform to clip through the obstacle.
+            Mesh mesh;
+            Vector3 scalingFactor = Vector3.one;
+            Vector3 meshOffset = Vector3.zero + offset;
 
-            if (hit.collider.transform.parent != gameObject && hit.collider.tag == "Colorable" && hit.collider.gameObject.GetComponent<Rigidbody>() &! hit.collider.gameObject.GetComponent<Green>())
+            // Get mesh from child's mesh filter.
+            if (child.GetComponent<MeshFilter>()) mesh = child.GetComponent<MeshFilter>().mesh;
+            else // If object doesn't have a mesh filter, assume a bounding box and pray that its collider doesn't extend out of it.
             {
-                // Add an Obstacle script to the movable obstacle and let it create a chain of objects that are being pushed.
-                // Once one of them hits something, a bounce command will propagate back through the chain, unlinking all obstacles in the process.
-
-                if (hit.collider.gameObject.GetComponent<Obstacle>()) return; // Don't add another Obstacle script if it already has one so as not to lag the whole engine.
-                Obstacle obstacle = hit.collider.gameObject.AddComponent<Obstacle>();
-                obstacle.first = true;
-                obstacle.Platform = this;
-                obstacle.moveDirection = moveDirection;
-                obstacle.speed = speed;
+                mesh = Resources.GetBuiltinResource<Mesh>("Cube.fbx");
+                scalingFactor = child.localScale;
             }
-            else if (hit.collider.tag != "Player") Bounce();
-        }
-        else if (transform.childCount > 1 && Vector3.Dot(moveDirection, Vector3.up) > 0)
-        {
-            // If we're going upwards, Raycast from all the vertices above each child's origin, and if you hit something, bounce.
 
-            // Known issue:
-            // When two objects are stacked on top of each other while riding the platform, the top object isn't calculated as part of the platform.
-            // Therefore, the top object will clip though either the ceiling, or the object below it.
-            
-            for (int i = transform.childCount - 1; i >= 0; i--)
+            if (child.gameObject == player) // The player's collider extends out of the assumed bounding box. A specialized approach is needed. :(
             {
-                Transform child = transform.GetChild(i);
-                if (child.gameObject == RideTriggerGameObject) continue; // Skip the Ride Trigger
+                CharacterController controller = player.GetComponent<CharacterController>();
+                scalingFactor = new Vector3(controller.radius, controller.height, controller.radius);
+                meshOffset = controller.center;
+            }
 
-                Vector3 tallestPoint = transform.position;
+            foreach (Vector3 vertex in mesh.vertices)
+            {
+                Vector3 testpoint = vertex;
 
-                Mesh mesh;
-                Vector3 scalingFactor = Vector3.one;
-                Vector3 offset = Vector3.zero;
-                // Get mesh from child collider
-                if (child.GetComponent<MeshFilter>()) mesh = child.GetComponent<MeshFilter>().mesh;
-                else // If object doesn't have a mesh filter, assume a bounding box.
+                // Apply necessary transformations to each vertex to match scale and offset of the object.
+                testpoint.x *= scalingFactor.x; testpoint.y *= scalingFactor.y; testpoint.z *= scalingFactor.z;
+                testpoint = child.TransformPoint(testpoint + meshOffset);
+
+                if (Physics.Raycast(testpoint, moveDirection, out RaycastHit hit, distance))
                 {
-                    mesh = Resources.GetBuiltinResource<Mesh>("Cube.fbx");
-                    scalingFactor = child.localScale;
-                }
-
-                if (child.gameObject == player) // The player's collision does not fit the general approach.
-                {
-                    CharacterController controller = player.GetComponent<CharacterController>();
-                    scalingFactor = new Vector3(controller.radius, controller.height, controller.radius);
-                    offset = controller.center;
-                }
-
-                foreach (Vector3 vertex in mesh.vertices)
-                {
-                    Vector3 testpoint = vertex;
-
-                    // Adjust bounding box to match scale and offset of object.
-                    testpoint.x *= scalingFactor.x;
-                    testpoint.y *= scalingFactor.y;
-                    testpoint.z *= scalingFactor.z;
-                    testpoint = child.TransformPoint(testpoint + offset);
-
-                    if (Physics.Raycast(testpoint, moveDirection, out hit, speed * Time.deltaTime))
+                    // If what you hit isn't an object already riding the platform or an object connected to the player,
+                    if (hit.collider.transform.root != transform && hit.collider.tag != "Player" && hit.collider.gameObject.layer != LayerMask.NameToLayer("Held Object"))
                     {
-                        if (hit.transform != transform && hit.transform.parent != transform) Bounce();
+                        passed = true;
                     }
                 }
             }
         }
-        else if (MovingIntongCollider(thisCollider, playerCollider, moveDirection))
-        {
-            Bounce(); // If the player is in front of the object, bounce. (handling this in the sweep test gave inconsistent results)
-        }
-    }
 
+        return passed;
+    }
+    
     /// <summary>
     /// Snaps Vector3 to its nearest axis.
     /// </summary>
@@ -237,6 +271,25 @@ public class Blue : MonoBehaviour
         return output;
     }
 
+    /// <summary>
+    /// Creates a Ride Trigger attatched to the GameObject of the specified collider.
+    /// </summary>
+    /// <param name="thisCollider">The collider to copy and follow.</param>
+    /// <param name="RideTriggerGameObject">The new GameObject with the PlatformRideTrigger component.</param>
+    public static void CreateRideTriggerObject(Collider thisCollider, out RideTrigger newPlatformRideTrigger)
+    {
+        GameObject RideTriggerGameObject = new GameObject("Ride Trigger");
+        RideTriggerGameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+
+        newPlatformRideTrigger = RideTriggerGameObject.AddComponent<RideTrigger>();
+
+        // Make new object follow its source object.
+        RideTriggerGameObject.transform.parent = thisCollider.transform;
+
+        // Copy Collider over to trigger object;
+        Collider triggerCollider = Blue.CopyCollider(thisCollider, RideTriggerGameObject);
+        triggerCollider.isTrigger = true;
+    }
 
     /// <summary>
     /// Copies an arbitrary collider to a new gameobject.
@@ -256,6 +309,32 @@ public class Blue : MonoBehaviour
     }
 
     /// <summary>
+    /// Creates a new GameObject with a copy of the collider provided, positioned one frame before its current position (assuming it's moving towards moveDirection at speed m/s. Be sure to Dispose of the GameObject after your SweepTest, and to do your SweepTest for twice the move distance.)
+    /// </summary>
+    /// <param name="thisCollider">The collider to copy.</param>
+    /// <param name="moveDirection">The direction that you plan to sweeptest towards.</param>
+    /// <param name="speed">The speed with which your object is moving.</param>
+    /// <returns>The Rigidbody with which to do your SweepTest.</returns>
+    public static Rigidbody SweepTestRigidBody(Collider thisCollider, Vector3 moveDirection, float speed)
+    {
+        GameObject SweepTestObject = new GameObject("Sweep Test Object");
+        SweepTestObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+
+        Collider sweepCollider = CopyCollider(thisCollider, SweepTestObject);
+        sweepCollider.isTrigger = true;
+
+        Rigidbody sweepRigidBody = SweepTestObject.AddComponent<Rigidbody>();
+        sweepRigidBody.isKinematic = true;
+
+        // Copy its position to this object's position, but one step before, so that SweepTest can detect the collision.
+        SweepTestObject.transform.position = thisCollider.transform.position - moveDirection * speed * Time.deltaTime;
+        SweepTestObject.transform.rotation = thisCollider.transform.rotation;
+        SweepTestObject.transform.localScale = thisCollider.transform.localScale;
+
+        return sweepRigidBody;
+    }
+
+    /// <summary>
     /// Checks if thisCollider, when moving towards moveDirection, is approaching otherCollider.
     /// </summary>
     /// <param name="thisCollider">The collider of the moving object.</param>
@@ -268,14 +347,15 @@ public class Blue : MonoBehaviour
         Transform thisTransform = thisCollider.transform;
         Transform otherTransform = otherCollider.transform;
 
+        // Approximate the points on the surface of each collider that minimize the distance from each other.
         Vector3 thisClosest = Physics.ClosestPoint(otherTransform.position, thisCollider, thisTransform.position, thisTransform.rotation);
-        Vector3 playerClosest = Physics.ClosestPoint(thisClosest, otherCollider, otherTransform.transform.position, otherTransform.transform.rotation);
+        Vector3 otherClosest = Physics.ClosestPoint(thisClosest, otherCollider, otherTransform.transform.position, otherTransform.transform.rotation);
 
-        float thresshold = 0.5f; // How close thisCollider can get to otherCollider before it is recognized.
-        if (Vector3.Distance(thisClosest, playerClosest) <= thresshold)
+        float thresshold = 0.5f; // How close thisCollider has to get to otherCollider for the test to pass.
+        if (Vector3.Distance(thisClosest, otherClosest) <= thresshold)
         {
             // If thisCollider is moving in the general direction of otherCollider, return true.
-            if (Vector3.Dot(playerClosest - thisClosest, moveDirection) > 0f) movingIntoCollider = true;
+            if (Vector3.Dot(otherClosest - thisClosest, moveDirection) > 0.01f) movingIntoCollider = true;
         }
 
         return movingIntoCollider;

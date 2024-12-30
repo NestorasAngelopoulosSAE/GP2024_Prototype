@@ -59,6 +59,10 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         if (uiManager.isPaused) return;
+        
+        // Keep player upright even if a moving platfrom tries to rotate them.
+        Vector3 eulerAngles = transform.rotation.eulerAngles;
+        transform.rotation = Quaternion.Euler(new Vector3(0f, eulerAngles.y, 0f));
 
         isGrounded = characterController.isGrounded;
 

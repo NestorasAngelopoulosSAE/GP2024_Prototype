@@ -18,12 +18,16 @@ public class Obstacle : MonoBehaviour
     Collider thisCollider;
     Collider playerCollider;
 
+    GameObject player;
+
     private void Start()
     {
         thisCollider = GetComponent<Collider>();
-        playerCollider = GameObject.FindGameObjectWithTag("Player").GetComponent<Collider>();
+        player = GameObject.FindGameObjectWithTag("Player");
+        playerCollider = player.GetComponent<Collider>();
     }
 
+    // Send a collision signal back to the platform and disassemble the chain moving from the end to start.
     public void PropagateBounce()
     {
         if (first) Platform.Bounce();
@@ -31,6 +35,7 @@ public class Obstacle : MonoBehaviour
         Destroy(this);
     }
 
+    // Disassemble the chain, moving from from start to end.
     public void PropagateUnlink()
     {
         if (next == null) Destroy(this);
@@ -42,40 +47,31 @@ public class Obstacle : MonoBehaviour
     {
         // Break chain of obstacles if one is removed.
         if ((first &! Platform) || (!first && !previous) || (GetComponent<Red>() && GetComponent<Red>().isHeld) || GetComponent<Green>()) PropagateUnlink();
+        // Sync all moveDirections with the Platform.
+        if (first && Platform.moveDirection != moveDirection) moveDirection = Platform.moveDirection;
+        else if (!first && previous.moveDirection != moveDirection) moveDirection = previous.moveDirection;
 
         // SweepTest will include the colliders of child objects even when they are triggers.
-        // To only test for the platform collider, we create a new GameObject with the same collider, set it to trigger so that it doesn't interact with anything, and do the SweepTest from there.
-        GameObject SweepTestObject = new GameObject("Sweep Test Object");
-        SweepTestObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-        Collider sweepCollider = Blue.CopyCollider(GetComponent<Collider>(), SweepTestObject);
-        sweepCollider.isTrigger = true;
-        Rigidbody sweepRigidBody = SweepTestObject.AddComponent<Rigidbody>();
-        sweepRigidBody.isKinematic = true;
-        // Copy its position to this object's position
-        SweepTestObject.transform.position = transform.position;
-        SweepTestObject.transform.rotation = transform.rotation;
-        SweepTestObject.transform.localScale = transform.localScale;
+        // To only test for the platform collider and not any child collider, we create a new GameObject with the same collider, set it to trigger so that it doesn't interact with anything, and do the SweepTest from there.
+        Rigidbody sweepRigidBody = Blue.SweepTestRigidBody(thisCollider, moveDirection, speed);
 
         // Check for obstacle using the new rigidbody
         CheckForObstacle(sweepRigidBody);
-        Destroy(SweepTestObject);
+        Destroy(sweepRigidBody.gameObject);
     }
 
-    public void CheckForObstacle(Rigidbody rb)
+    void CheckForObstacle(Rigidbody rigidbody)
     {
-        // Known issue:
-        // When the object is already colliding with something, SweepTest ignores that collision.
-        // Therefore, if this obstacle has already been pushed against a wall, the SweepTest will fail.
-        // This will cause the platform and any previous obstacles to clip through this obstacle.
-
-        RaycastHit hit;
-        // Check if object is to collide with something on the next frame.
-        if (rb.SweepTest(moveDirection, out hit, speed * Time.deltaTime, QueryTriggerInteraction.Ignore))
+        // Check if object is to collide with something on the next frame. (*2 because we moved the collider back a frame)
+        if (rigidbody.SweepTest(moveDirection, out RaycastHit hit, speed * Time.deltaTime * 2, QueryTriggerInteraction.Ignore))
         {            
             // When platform collides with something that is movable, add it to the chain.
-            if (hit.collider.tag == "Colorable" && hit.collider.gameObject.GetComponent<Rigidbody>() & !hit.collider.gameObject.GetComponent<Green>())
+            if (hit.collider.tag == "Colorable" &! hit.collider.gameObject.GetComponent<Green>())
             {
-                if (hit.collider.gameObject.GetComponent<Obstacle>()) return; // Don't add another Obstacle script if it already has one so as not to lag the whole engine.
+                // Add an Obstacle script to the movable obstacle and let it create a chain of objects that are being pushed.
+                // Once one of them hits something, a bounce command will propagate back through the chain, unlinking all obstacles in the process.
+
+                if (hit.collider.gameObject.GetComponent<Obstacle>()) return; // Don't add another Obstacle script if it already has one.
                 Obstacle obstacle = hit.collider.gameObject.AddComponent<Obstacle>();
                 obstacle.previous = this;
                 obstacle.moveDirection = moveDirection;
@@ -83,7 +79,8 @@ public class Obstacle : MonoBehaviour
             }
             else if (hit.collider.tag != "Player") PropagateBounce(); // When it collides with something immovable, sent the platform back, while breaking the chain.
         }
-        else if (GetComponent<Green>() || Blue.MovingIntongCollider(thisCollider, playerCollider, moveDirection)) PropagateBounce(); // If an object in the chain becomes green, or if you're about to hit the player, bounce off.
+        
+        if (Blue.MovingIntongCollider(thisCollider, playerCollider, moveDirection) && player.transform.root != transform.root) PropagateBounce(); // If you're about to hit the player, bounce off. (don't, if you're moving towards )
     }
 
     private void OnCollisionExit(Collision collision)

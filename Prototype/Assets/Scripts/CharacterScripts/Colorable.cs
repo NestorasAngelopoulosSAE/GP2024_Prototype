@@ -22,7 +22,7 @@ public class Colorable : MonoBehaviour
     public void SetColor(GameplayColor newColor)
     {
         myRenderer.material = newColor.material;
-        foreach (GameplayColor color in colorManager.GameplayColors) // Set the correct components for the object's new color
+        foreach (GameplayColor color in colorManager.GameplayColors) // Set the correct components for the object's new color.
         {
             if (color.Equals(newColor))
             {

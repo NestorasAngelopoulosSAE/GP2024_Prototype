@@ -351,8 +351,8 @@ public class Blue : MonoBehaviour
         Vector3 thisClosest = Physics.ClosestPoint(otherTransform.position, thisCollider, thisTransform.position, thisTransform.rotation);
         Vector3 otherClosest = Physics.ClosestPoint(thisClosest, otherCollider, otherTransform.transform.position, otherTransform.transform.rotation);
 
-        float thresshold = 0.5f; // How close thisCollider has to get to otherCollider for the test to pass.
-        if (Vector3.Distance(thisClosest, otherClosest) <= thresshold)
+        float threshold = 0.5f; // How close thisCollider has to get to otherCollider for the test to pass.
+        if (Vector3.Distance(thisClosest, otherClosest) <= threshold)
         {
             // If thisCollider is moving in the general direction of otherCollider, return true.
             if (Vector3.Dot(otherClosest - thisClosest, moveDirection) > 0.01f) movingIntoCollider = true;

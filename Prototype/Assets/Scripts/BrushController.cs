@@ -19,7 +19,7 @@ public class BrushController : MonoBehaviour
 
     private void Start()
     {
-        colorManager = GameObject.FindGameObjectWithTag("Gameplay Manager").GetComponent<ColorManager>();
+        colorManager = GameObject.FindWithTag("Gameplay Manager").GetComponent<ColorManager>();
         if (!Crosshair) Crosshair = GameObject.Find("Crosshair").GetComponent<Image>();
         //ChangeColor();
     }
@@ -32,7 +32,7 @@ public class BrushController : MonoBehaviour
     public void ChangeColor()
     {
         brushMaterial.mainTexture = Textures[colorManager.selectedColor]; // Set brush color
-        Crosshair.color = colorManager.GameplayColors[colorManager.selectedColor].material.color; // Set crosshair color
+        Crosshair.color = colorManager.GameplayColors[colorManager.selectedColor].color; // Set crosshair color
     }
 
     private void OnApplicationQuit()

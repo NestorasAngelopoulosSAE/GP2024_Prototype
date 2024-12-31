@@ -4,17 +4,25 @@
 /// Holds a list of available colors and the objects that the player has colored
 /// Handles input and raycasting for coloring objects
 /// </summary>
-
-using UnityEditor.ShaderGraph;
 using UnityEngine;
 
 [System.Serializable]
 public struct GameplayColor
 {
     public bool unlocked;
+    public string name;
+    public Color color;
     public KeyCode keybind;
-    public Material material;
     public GameObject coloredObject;
+
+    public GameplayColor(Color Color = new Color())
+    {
+        unlocked = false;
+        name = string.Empty;
+        color = Color;
+        keybind = KeyCode.None;
+        coloredObject = null;
+    }
 }
 
 public class ColorManager : MonoBehaviour
@@ -29,8 +37,8 @@ public class ColorManager : MonoBehaviour
     
     public GameplayColor[] GameplayColors;
 
-    [Tooltip("The material to be applied to objects when their color is removed.")]
-    public Material colorableMaterial;
+    [Tooltip("The color to be applied to objects when their color is removed.")]
+    public Color defaultColorableColor;
 
     public Animator brushAnimator;
 
@@ -39,7 +47,7 @@ public class ColorManager : MonoBehaviour
     private void Start()
     {
         uiManager = GetComponent<UIManager>();
-        
+
         // Begin the level with the first unlocked color on the brush. If no color is unlocked, leave the brush dry.
         selectedColor = -1;
         for (int i = 0; i < GameplayColors.Length; i++)
@@ -73,8 +81,8 @@ public class ColorManager : MonoBehaviour
         }
 
         int prevSelection = selectedColor;
-        // Switch selectedColor on scroll (also handle overflow/underflow)
-        if (Input.GetAxis("Mouse ScrollWheel") > 0f && GameplayColors[selectedColor].unlocked) // forward
+        // Switch selectedColor on scroll. (also handle overflow/underflow)
+        if (Input.GetAxis("Mouse ScrollWheel") > 0f && GameplayColors[selectedColor].unlocked) // forwards
         {
             do
             {
@@ -92,64 +100,86 @@ public class ColorManager : MonoBehaviour
             }
             while (!GameplayColors[selectedColor].unlocked);
         }
-        // Switch selectedColor with keybind
+        // Switch selectedColor with keybind.
         for (int i = 0; i < GameplayColors.Length; i++)
         {
             if (Input.GetKeyDown(GameplayColors[i].keybind) && GameplayColors[i].unlocked) selectedColor = i;
         }
         if (selectedColor != prevSelection) brushAnimator.SetTrigger("Change");
 
-        //Color object when left click is presesd
+        //Color object when left click is presesd.
         if (Input.GetMouseButtonDown(0))
         {
             brushAnimator.SetTrigger("Apply");
 
-            // If colorable, change the color of the object the player is looking at
-            RaycastHit hit;
-            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity))
+            // If colorable, change the color of the object the player is looking at.
+            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.TransformDirection(Vector3.forward), out RaycastHit hit, Mathf.Infinity))
             {
                 if (hit.collider.gameObject.tag == "Colorable")
                 {
                     if (hit.collider.gameObject != GameplayColors[selectedColor].coloredObject)
                     {
-                        // Clear any color that the hit object may have
+                        // Clear any color that the hit object may have.
                         for (int i = 0; i < GameplayColors.Length; i++)
                         {
                             if (hit.collider.gameObject == GameplayColors[i].coloredObject)
                             {
                                 if (!overrideColors) return;
-                                RemoveColor(i);
+                                RemoveColor(i, false, hit.point);
                             }
                         }
-                        // Check if another object already has this color and if so clear it
+                        // Check if another object already has this color and if so clear it.
                         if (GameplayColors[selectedColor].coloredObject != null)
                         {
                             if (!overrideColors) return;
-                            RemoveColor(selectedColor);
+                            RemoveColor(selectedColor, true);
                         }
                     }
 
                     GameplayColors[selectedColor].coloredObject = hit.collider.gameObject;
-                    GameplayColors[selectedColor].coloredObject.GetComponent<Colorable>().SetColor(GameplayColors[selectedColor]);
+                    GameplayColors[selectedColor].coloredObject.GetComponent<Colorable>().SetColor(GameplayColors[selectedColor], true, hit.point);
                 }
             }
         }
-        else if (Input.GetMouseButtonDown(1))
+        else if (Input.GetMouseButtonDown(1)) // Remove color from object when right click is presesd.
         {
-            RemoveColor(selectedColor); // Remove color from object when right click is presesd
+            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.TransformDirection(Vector3.forward), out RaycastHit hit, Mathf.Infinity) && hit.collider.gameObject == GameplayColors[selectedColor].coloredObject)
+            {
+                // If the player's looking at the coloredObject, start clearing the color from there.
+                RemoveColor(selectedColor, true, hit.point);
+            }
+            else RemoveColor(selectedColor, true);
             brushAnimator.SetTrigger("Remove");
         }
     }
 
-    void RemoveColor(int index) // Clear color from curently colored object
+    /// <summary>
+    /// Removes the specified colored object from the index. If clearColor is false, it doesn't clear its color.
+    /// </summary>
+    /// <param name="index">The index in GameplayColors of the color you want to remove.</param>
+    /// <param name="clearColor">The point from which to start the discoloration.</param>
+    void RemoveColor(int index, bool clearColor)
     {
         if (GameplayColors[index].coloredObject == null) return;
 
-        // Set object's material to Unity's default material and forget it
-        GameplayColor defaultColor = new GameplayColor();
-        if (colorableMaterial != null) defaultColor.material = colorableMaterial;
-        else defaultColor.material = new Material(Shader.Find("Diffuse"));
-        GameplayColors[index].coloredObject.GetComponent<Colorable>().SetColor(defaultColor);
-        GameplayColors[index].coloredObject = null;        
+        // Get the closest point on the surface of its collider to the camera, and start clearing from there.
+        GameObject coloredObject = GameplayColors[selectedColor].coloredObject;
+        Vector3 closestPoint = Physics.ClosestPoint(Camera.main.transform.position, coloredObject.GetComponent<Collider>(), coloredObject.transform.position, coloredObject.transform.rotation);
+        RemoveColor(selectedColor, true, closestPoint);
+    }
+
+    /// <summary>
+    /// Removes the specified colored object from the index. If clearColor is false, it doesn't clear its color. The defaultColor will start at hitPoint and expand from there.
+    /// </summary>
+    /// <param name="index">The index in GameplayColors of the color you want to remove.</param>
+    /// <param name="clearColor">If the color should be turned back to the defaultColorableColor.</param>
+    /// <param name="hitPoint">The point from which to start the discoloration.</param>
+    void RemoveColor(int index, bool clearColor, Vector3 hitPoint) // Clear color from curently colored object.
+    {
+        if (GameplayColors[index].coloredObject == null) return;
+
+        // Set object's color to the default color.
+        GameplayColors[index].coloredObject.GetComponent<Colorable>().SetColor(new GameplayColor(defaultColorableColor), clearColor, hitPoint);
+        GameplayColors[index].coloredObject = null; // Forget this object.
     }
 }

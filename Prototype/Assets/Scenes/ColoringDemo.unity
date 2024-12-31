@@ -155,6 +155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 193e4431aeafc7445a16ec092219a91c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  coloringSpeed: 2
 --- !u!54 &39920906
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -625,6 +626,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 193e4431aeafc7445a16ec092219a91c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  coloringSpeed: 2
 --- !u!54 &289833631
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1093,6 +1095,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 193e4431aeafc7445a16ec092219a91c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  coloringSpeed: 2
 --- !u!1 &536962854
 GameObject:
   m_ObjectHideFlags: 0
@@ -1233,18 +1236,21 @@ MonoBehaviour:
   selectedColor: 0
   GameplayColors:
   - unlocked: 1
+    name: Red
+    color: {r: 1, g: 0, b: 0, a: 1}
     keybind: 49
-    material: {fileID: 2100000, guid: cfa645006aca35c47a0ad8feebc224e4, type: 2}
     coloredObject: {fileID: 0}
   - unlocked: 1
+    name: Green
+    color: {r: 0, g: 1, b: 0, a: 1}
     keybind: 50
-    material: {fileID: 2100000, guid: 56f2d3cb7736ee843832ec21b2867c24, type: 2}
     coloredObject: {fileID: 0}
   - unlocked: 1
+    name: Blue
+    color: {r: 0, g: 0, b: 1, a: 1}
     keybind: 51
-    material: {fileID: 2100000, guid: d1ec4b7e760dc4c4fbcb9cb8757a83bc, type: 2}
     coloredObject: {fileID: 0}
-  colorableMaterial: {fileID: 2100000, guid: d82f3569f5f41a142b8b5cf2471f193d, type: 2}
+  defaultColorableColor: {r: 1, g: 1, b: 1, a: 0}
   brushAnimator: {fileID: 367009159335350296}
 --- !u!4 &563250625
 Transform:
@@ -1421,6 +1427,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 193e4431aeafc7445a16ec092219a91c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  coloringSpeed: 2
 --- !u!1 &977408909
 GameObject:
   m_ObjectHideFlags: 0
@@ -1672,6 +1679,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 193e4431aeafc7445a16ec092219a91c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  coloringSpeed: 2
 --- !u!1 &1268614941
 GameObject:
   m_ObjectHideFlags: 0

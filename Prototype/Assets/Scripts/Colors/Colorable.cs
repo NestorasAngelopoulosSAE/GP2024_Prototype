@@ -2,6 +2,7 @@
 /// Nestoras Angelopoulos 2024
 /// 
 /// Makes object colorable. Dynamically adds and removes corresponding scripts for each color.
+/// Adds a RideTrigger object so that objects in a stack all follow each other.
 /// Controls the shader that swipes each color over the object.
 /// </summary>
 using System;
@@ -17,9 +18,12 @@ public class Colorable : MonoBehaviour
 
     void Start()
     {
-        gameObject.tag = "Colorable";
         myRenderer = GetComponent<Renderer>();
         colorManager = GameObject.FindWithTag("Gameplay Manager").GetComponent<ColorManager>();
+
+        gameObject.tag = "Colorable";
+        // Add a ride trigger so that a stack of objects can all move along with a moving platform.
+        CreateRideTriggerObject();
     }
 
     private void Update()
@@ -47,5 +51,22 @@ public class Colorable : MonoBehaviour
             myRenderer.material.SetVector("_HitPosition", transform.InverseTransformPoint(hitPosition));
             threshold = 0;
         }
+    }
+    
+    GameObject CreateRideTriggerObject()
+    {
+        GameObject RideTriggerGameObject = new GameObject("Ride Trigger");
+        RideTriggerGameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+
+        RideTriggerGameObject.AddComponent<RideTrigger>();
+
+        // Make new object follow its source object.
+        RideTriggerGameObject.transform.parent = transform;
+
+        // Copy Collider over to trigger object;
+        Collider triggerCollider = Blue.CopyCollider(GetComponent<Collider>(), RideTriggerGameObject);
+        triggerCollider.isTrigger = true;
+
+        return RideTriggerGameObject;
     }
 }

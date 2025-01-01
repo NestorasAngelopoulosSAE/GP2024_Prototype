@@ -7,13 +7,14 @@ using UnityEngine;
 
 public class Obstacle : MonoBehaviour
 {
-    public Obstacle previous;
-    public bool first;
-    public Obstacle next;
-    public Blue Platform;
+    [HideInInspector] public bool first { private get; set; }
+    [HideInInspector] public Blue Platform { private get; set; }
 
-    public Vector3 moveDirection;
-    public float speed;
+    [HideInInspector] public Vector3 moveDirection { private get; set; }
+    [HideInInspector] public float speed { private get; set; }
+
+    Obstacle previous;
+    Obstacle next;
 
     Collider thisCollider;
     Collider playerCollider;
@@ -63,7 +64,8 @@ public class Obstacle : MonoBehaviour
     void CheckForObstacle(Rigidbody rigidbody)
     {
         // Check if object is to collide with something on the next frame. (*2 because we moved the collider back a frame)
-        if (rigidbody.SweepTest(moveDirection, out RaycastHit hit, speed * Time.deltaTime * 2, QueryTriggerInteraction.Ignore))
+        RaycastHit[] hits = rigidbody.SweepTestAll(moveDirection, speed * Time.deltaTime * 2, QueryTriggerInteraction.Ignore);
+        foreach (RaycastHit hit in hits)
         {            
             // When platform collides with something that is movable, add it to the chain.
             if (hit.collider.tag == "Colorable" &! hit.collider.gameObject.GetComponent<Green>())
@@ -80,7 +82,7 @@ public class Obstacle : MonoBehaviour
             else if (hit.collider.tag != "Player") PropagateBounce(); // When it collides with something immovable, sent the platform back, while breaking the chain.
         }
         
-        if (Blue.MovingIntongCollider(thisCollider, playerCollider, moveDirection) && player.transform.root != transform.root) PropagateBounce(); // If you're about to hit the player, bounce off. (don't, if you're moving towards )
+        if (Blue.MovingIntongCollider(thisCollider, playerCollider, moveDirection) && player.transform.root != transform.root) PropagateBounce(); // If you're about to hit the player, bounce off. (don't, if you're moving upwards because the player might be standing on you)
     }
 
     private void OnCollisionExit(Collision collision)

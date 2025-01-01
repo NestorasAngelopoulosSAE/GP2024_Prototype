@@ -23,29 +23,16 @@ public class RideTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Player") // Player
+        if (transform.parent.gameObject.layer != LayerMask.NameToLayer("Held Object") && (other.tag == "Player" || other.tag == "Colorable" &! other.GetComponent<Green>() &! other.GetComponent<Blue>()) &! other.GetComponent<RideTrigger>())
         {
-            other.transform.SetParent(transform.root, true);
-        }
-        else if (other.tag == "Colorable" &! other.GetComponent<Green>()) // Movable
-        {
-            other.transform.SetParent(transform.root, true);
-
-            // Don't add a Ride Trigger if there is already one there.
-            for (int i = 0; i < other.transform.childCount; i++)
-            {
-                if (other.transform.GetChild(i).GetComponent<RideTrigger>()) return;
-            }
-
-            // Add another ride trigger to any object on the platform so that a stack can be created.
-            Blue.CreateRideTriggerObject(other, out RideTrigger RideTrigger);
+            other.transform.SetParent(transform.parent, true);
         }
     }
 
-    // Make sure that if an object that's riding on the platform turns green, it will stop following it.
+    // Make sure that if an object that's riding on the platform changes properties, it will stop following it.
     private void OnTriggerStay(Collider other)
     {
-        if (other.GetComponent<Green>())
+        if (transform.parent.gameObject.layer == LayerMask.NameToLayer("Held Object") || other.GetComponent<Green>() || other.GetComponent<Blue>())
         {
             OnTriggerExit(other);
         }
@@ -54,34 +41,7 @@ public class RideTrigger : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         // Disconnect from platform.
+        if (other.transform.GetComponent<RideTrigger>()) return;
         other.transform.SetParent(null, true);
-
-        // Find the next trigger on the stack and repeat.
-        for (int i = 0; i < other.transform.childCount; i++)
-        {
-            RideTrigger trigger = other.transform.GetChild(i).GetComponent<RideTrigger>();
-            if (trigger)
-            {
-                trigger.Remove();
-            }
-        }
-    }
-
-    // This couldn't be implemented in OnDestroy() because marking the object for destruction prevents us from targetting its parent.
-    public void Remove()
-    {
-        if (transform.parent != null)
-        {
-            Transform parent = transform.parent;
-
-            for (int i = 0; i < parent.childCount; i++)
-            {
-                if (!parent.GetChild(i).GetComponent<RideTrigger>()) // Disconnect any siblings.
-                {
-                    OnTriggerExit(parent.GetChild(i).GetComponent<Collider>());
-                }
-            }
-        }
-        Destroy(gameObject);
     }
 }

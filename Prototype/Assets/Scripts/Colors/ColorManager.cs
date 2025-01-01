@@ -136,8 +136,11 @@ public class ColorManager : MonoBehaviour
                         }
                     }
 
+                    // Update the coloredObject and change its color.
                     GameplayColors[selectedColor].coloredObject = hit.collider.gameObject;
                     GameplayColors[selectedColor].coloredObject.GetComponent<Colorable>().SetColor(GameplayColors[selectedColor], true, hit.point);
+                    // If the object has a timer script, start its timer.
+                    if (GameplayColors[selectedColor].coloredObject.GetComponent<ScriptRemovalTimer>()) GameplayColors[selectedColor].coloredObject.GetComponent<ScriptRemovalTimer>().StartTimer();
                 }
             }
         }
@@ -158,7 +161,7 @@ public class ColorManager : MonoBehaviour
     /// </summary>
     /// <param name="index">The index in GameplayColors of the color you want to remove.</param>
     /// <param name="clearColor">The point from which to start the discoloration.</param>
-    void RemoveColor(int index, bool clearColor)
+    public void RemoveColor(int index, bool clearColor)
     {
         if (GameplayColors[index].coloredObject == null) return;
 

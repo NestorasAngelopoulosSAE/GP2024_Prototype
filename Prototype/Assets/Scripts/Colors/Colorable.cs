@@ -24,6 +24,8 @@ public class Colorable : MonoBehaviour
         gameObject.tag = "Colorable";
         // Add a ride trigger so that a stack of objects can all move along with a moving platform.
         CreateRideTriggerObject();
+
+        if (GetComponent<ScriptRemovalTimer>()) myRenderer.material.SetInt("_IsTimer", 1);
     }
 
     private void Update()
@@ -43,7 +45,7 @@ public class Colorable : MonoBehaviour
             else Destroy(GetComponent(Type.GetType(gameplayColor.name)));
         }
 
-        if (clearColor)
+        if (clearColor) // Update the shader.
         {
             Color lastColor = myRenderer.material.GetColor("_InsideColor");
             myRenderer.material.SetColor("_InsideColor", newColor.color);

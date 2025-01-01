@@ -27,7 +27,7 @@ public class UIManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape)) TogglePause();
     }
 
-    void TogglePause()
+    public void TogglePause()
     {
         isPaused = !isPaused;
         if (isPaused)

@@ -1,13 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
 public class DisplaySettings : MonoBehaviour
 {
     Resolution[] resolutions;
+    public TMP_Dropdown resolutionDropdown;
 
-    public TMPro.TMP_Dropdown resolutionDropdown;
     public void SetQuality(int qualityIndex)
     {
         QualitySettings.SetQualityLevel(qualityIndex);
@@ -51,9 +51,9 @@ public class DisplaySettings : MonoBehaviour
         resolutionDropdown.RefreshShownValue();
     }
 
-        public void SetResolution (int resolutionIndex)
-        {
-            Resolution resolution = resolutions[resolutionIndex];
-            Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
-        }
+    public void SetResolution (int resolutionIndex)
+    {
+        Resolution resolution = resolutions[resolutionIndex];
+        Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
+    }
 }

@@ -166,9 +166,9 @@ public class ColorManager : MonoBehaviour
         if (GameplayColors[index].coloredObject == null) return;
 
         // Get the closest point on the surface of its collider to the camera, and start clearing from there.
-        GameObject coloredObject = GameplayColors[selectedColor].coloredObject;
+        GameObject coloredObject = GameplayColors[index].coloredObject;
         Vector3 closestPoint = Physics.ClosestPoint(Camera.main.transform.position, coloredObject.GetComponent<Collider>(), coloredObject.transform.position, coloredObject.transform.rotation);
-        RemoveColor(selectedColor, true, closestPoint);
+        RemoveColor(index, clearColor, closestPoint);
     }
 
     /// <summary>

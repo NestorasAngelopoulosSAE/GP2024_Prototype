@@ -2716,7 +2716,7 @@ MonoBehaviour:
   m_MinValue: 1
   m_MaxValue: 20
   m_WholeNumbers: 0
-  m_Value: 1
+  m_Value: 2
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -9427,6 +9427,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   masterMixer: {fileID: 24100000, guid: ab2cb8d099f93eb49841dbc81fdf59ca, type: 2}
+  SFXSlider: {fileID: 0}
+  MasterSlider: {fileID: 0}
+  MusicSlider: {fileID: 0}
 --- !u!114 &2135396499
 MonoBehaviour:
   m_ObjectHideFlags: 0

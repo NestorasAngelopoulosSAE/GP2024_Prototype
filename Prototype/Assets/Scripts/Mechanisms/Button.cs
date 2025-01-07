@@ -12,8 +12,8 @@ public class Button : MonoBehaviour
     public UnityEvent onButtonPressed;
     public UnityEvent onButtonReleased;  
     // Pressed, target and starting button positions...
-    public float pressedY = 0.06f;
-    public float startingY = 1.84f;
+    float startingY;
+    float pressedY = 0.06f;
     private Vector3 targetPosition;
     // var that will allow us to calculate how many things are colliding with the button...
     [SerializeField] private int ThingsOnMyButton;
@@ -21,7 +21,11 @@ public class Button : MonoBehaviour
     public float speed = 2f;
 
     void Start()
-    {      
+    {
+        //Limits 
+        startingY = transform.position.y;
+        pressedY = startingY - 0.124f;
+
         // Creating the Unity events
         if (onButtonPressed == null)
             onButtonPressed = new UnityEvent();

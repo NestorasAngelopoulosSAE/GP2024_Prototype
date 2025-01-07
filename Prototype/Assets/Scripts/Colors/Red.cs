@@ -1,6 +1,6 @@
 /// <summary>
 /// Thamnopoulos Thanos 2024
-/// Makes objects holdable
+/// Makes objects holdable and not able to push other objects when held
 /// Red : )
 /// </summary>
 
@@ -15,6 +15,9 @@ public class Red : MonoBehaviour
     private Rigidbody thisRB;
     private float Mass;
     [HideInInspector] public bool isHeld;
+
+    Vector3 positionOffset;
+    Quaternion rotationOffset;
        
     private float pickupRange = 2.0f;
 
@@ -29,6 +32,8 @@ public class Red : MonoBehaviour
         thisRB = GetComponent<Rigidbody>();
 
         uiManager = GameObject.FindGameObjectWithTag("Gameplay Manager").GetComponent<UIManager>();
+
+        Mass = thisRB.mass;
     }
 
     public void OnDisable()
@@ -75,7 +80,10 @@ public class Red : MonoBehaviour
 
     private void PickupObject()
     {
-        Mass = thisRB.mass; // getting starting mass.
+        positionOffset = (transform.position - holdArea.position);
+        rotationOffset = (transform.rotation * Quaternion.Inverse(Camera.main.transform.rotation));
+
+        //Mass = thisRB.mass; // getting starting mass.
         thisRB.mass = Mathf.Epsilon; // changing said mass to Epsilon.
         isHeld = true;
         thisRB.constraints = RigidbodyConstraints.FreezeRotation;
@@ -85,7 +93,7 @@ public class Red : MonoBehaviour
 
     private void DropObject()
     {
-        thisRB.mass = Mass;
+        thisRB.mass = Mass;        
         isHeld = false;
         thisRB.constraints = RigidbodyConstraints.None;
         thisRB.useGravity = true;
@@ -94,21 +102,24 @@ public class Red : MonoBehaviour
 
     private void Move()
     {
+        thisRB.velocity = Vector3.zero;
+        thisRB.angularVelocity = Vector3.zero;
+
         transform.parent = null;
 
-        if (Vector3.Distance(transform.position, holdArea.position) > 5f) DropObject();
+        if (Vector3.Distance(transform.position, holdArea.position + positionOffset) > 5f) DropObject();
         float moveSpeed = 5.0f;
 
         // Nestoras Cameo: Raycasts to the next position (ignoring the player and this object) and moves to the collision point instead of the holdArea. This avoids clipping and jittering.
-        if (Physics.Raycast(transform.position, holdArea.position - transform.position, out RaycastHit hit, Vector3.Distance(transform.position, holdArea.position), LayerMask.NameToLayer("Held Object") | LayerMask.NameToLayer("Player")))
+        if (Physics.Raycast(transform.position, holdArea.position + positionOffset - transform.position, out RaycastHit hit, Vector3.Distance(transform.position, holdArea.position + positionOffset), LayerMask.NameToLayer("Held Object") | LayerMask.NameToLayer("Player")))
         {
             transform.position = Vector3.Lerp(transform.position, hit.point, Time.deltaTime * moveSpeed);
         }
         else
         {
-            transform.position = Vector3.Lerp(transform.position, holdArea.position, Time.deltaTime * moveSpeed);
+            transform.position = Vector3.Lerp(transform.position, holdArea.position + positionOffset, Time.deltaTime * moveSpeed);
         }
-
-        transform.rotation = Quaternion.Slerp(transform.rotation, Camera.main.transform.rotation, Time.deltaTime * moveSpeed);
+                // HERE
+       // transform.rotation = Quaternion.Slerp(transform.rotation, Camera.main.transform.rotation * rotationOffset, Time.deltaTime * moveSpeed);
     }
 }

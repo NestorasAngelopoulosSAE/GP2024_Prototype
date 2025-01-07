@@ -6,15 +6,14 @@ using UnityEngine;
 /// </summary>
 
 public class PlayerController : MonoBehaviour
-{
-    // I DO DECLARE...
+{   
     Transform mainCamera;
     CharacterController characterController;
 
-    public float speed = 20;
+    public float speed = 10;
     public float rotationSpeed = 2;
 
-    // Mmovement Inputs...
+    // Movement Inputs...
     float inpHor;
     float inpVer;
 
@@ -30,7 +29,7 @@ public class PlayerController : MonoBehaviour
     //Gravity...
     float gravity = 15;
     public float airControl = 1.5f;
-    public float jumpForce = 3;
+    public float jumpForce = 2.5f;
     bool isGrounded = false;
 
     //Direction
@@ -42,6 +41,11 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (PlayerPrefs.HasKey("Sensitivity"))
+        {
+            rotationSpeed = PlayerPrefs.GetFloat("Sensitivity");
+        }
+
         characterController = GetComponent<CharacterController>();
         mainCamera = Camera.main.transform;
 

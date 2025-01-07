@@ -2186,8 +2186,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  pressedY: 0.06
-  startingY: 0.184
   ThingsOnMyButton: 0
   speed: 2
 --- !u!1 &1630510800
@@ -2538,6 +2536,14 @@ PrefabInstance:
       propertyPath: Crosshair
       value: 
       objectReference: {fileID: 338684653}
+    - target: {fileID: 7745928750689117626, guid: bfba9d59b0b4f8a49982fd73eb8dc0b5, type: 3}
+      propertyPath: speed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7745928750689117626, guid: bfba9d59b0b4f8a49982fd73eb8dc0b5, type: 3}
+      propertyPath: jumpForce
+      value: 2.5
+      objectReference: {fileID: 0}
     - target: {fileID: 7983301330828567143, guid: bfba9d59b0b4f8a49982fd73eb8dc0b5, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

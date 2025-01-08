@@ -73,7 +73,7 @@ public class ColorManager : MonoBehaviour
                 if (GameplayColors[i].unlocked)
                 {
                     selectedColor = i;
-                    brushAnimator.gameObject.GetComponent<BrushController>().ChangeColor();
+                    brushAnimator.SetTrigger("Change");
                     break;
                 }
             }

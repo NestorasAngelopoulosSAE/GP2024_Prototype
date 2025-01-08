@@ -16,6 +16,10 @@ public class Colorable : MonoBehaviour
     float threshold;
     float speed = 5;
 
+    Vector3 SpawnPosition;
+    Quaternion SpawnRotation;
+    Rigidbody rigidbody;
+
     void Start()
     {
         myRenderer = GetComponent<Renderer>();
@@ -26,12 +30,28 @@ public class Colorable : MonoBehaviour
         CreateRideTriggerObject();
 
         if (GetComponent<ScriptRemovalTimer>()) myRenderer.material.SetInt("_IsTimer", 1);
+
+
+        rigidbody = GetComponent<Rigidbody>();
+        SpawnPosition = transform.position;
+        SpawnRotation = transform.rotation;
     }
 
     private void Update()
     {
         threshold += Time.deltaTime * speed; 
         myRenderer.material.SetFloat("_Threshold", threshold);
+
+
+        // Respawn object if it fell off the map.
+        if (transform.position.y < -10)
+        {
+            rigidbody.velocity = Vector3.zero;
+            rigidbody.angularVelocity = Vector3.zero;
+
+            transform.position = SpawnPosition;
+            transform.rotation = SpawnRotation;
+        }
     }
 
     public void SetColor(GameplayColor newColor, bool clearColor, Vector3 hitPosition)

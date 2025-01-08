@@ -41,7 +41,7 @@ public class RideTrigger : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         // Disconnect from platform.
-        if (other.transform.GetComponent<RideTrigger>()) return;
+        if (other.transform.GetComponent<RideTrigger>() || other.tag == "Button") return;
         other.transform.SetParent(null, true);
     }
 }

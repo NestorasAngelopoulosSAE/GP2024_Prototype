@@ -23,7 +23,7 @@ public class Button : MonoBehaviour
     void Start()
     {
         //Limits 
-        startingY = transform.position.y;
+        startingY = transform.localPosition.y;
         pressedY = startingY - 0.124f;
 
         // Creating the Unity events
@@ -71,15 +71,15 @@ public class Button : MonoBehaviour
     {         
         if (ThingsOnMyButton > 0)
         {
-            targetPosition = new Vector3(transform.position.x, pressedY, transform.position.z);
+            targetPosition = new Vector3(transform.localPosition.x, pressedY, transform.localPosition.z);
 
-            transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * speed);     
+            transform.localPosition = Vector3.Lerp(transform.localPosition, targetPosition, Time.deltaTime * speed);  
         }
         else
         {
-            targetPosition = new Vector3(transform.position.x, startingY, transform.position.z);
+            targetPosition = new Vector3(transform.localPosition.x, startingY, transform.localPosition.z);
 
-            transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * speed);
+            transform.localPosition = Vector3.Lerp(transform.localPosition, targetPosition, Time.deltaTime * speed);
         }
     }
 }

@@ -15,9 +15,6 @@ public class Red : MonoBehaviour
     private Rigidbody thisRB;
     private float Mass;
     [HideInInspector] public bool isHeld;
-
-    Vector3 positionOffset;
-    Quaternion rotationOffset;
        
     private float pickupRange = 2.0f;
 
@@ -27,7 +24,7 @@ public class Red : MonoBehaviour
     {
         //Debug.Log($"{gameObject.name} is Red!");
 
-        holdArea = GameObject.Find("Range").transform;
+        holdArea = GameObject.Find("_HeldObjectTarget").transform;
 
         thisRB = GetComponent<Rigidbody>();
 
@@ -80,8 +77,8 @@ public class Red : MonoBehaviour
 
     private void PickupObject()
     {
-        positionOffset = (transform.position - holdArea.position);
-        rotationOffset = (transform.rotation * Quaternion.Inverse(Camera.main.transform.rotation));
+        holdArea.position = transform.position;
+        holdArea.rotation = transform.rotation;
 
         //Mass = thisRB.mass; // getting starting mass.
         thisRB.mass = Mathf.Epsilon; // changing said mass to Epsilon.
@@ -93,6 +90,9 @@ public class Red : MonoBehaviour
 
     private void DropObject()
     {
+        holdArea.position = holdArea.parent.position;
+        holdArea.rotation = holdArea.parent.rotation;
+
         thisRB.mass = Mass;        
         isHeld = false;
         thisRB.constraints = RigidbodyConstraints.None;
@@ -107,19 +107,19 @@ public class Red : MonoBehaviour
 
         transform.parent = null;
 
-        if (Vector3.Distance(transform.position, holdArea.position + positionOffset) > 5f) DropObject();
+        if (Vector3.Distance(transform.position, holdArea.position) > 5f) DropObject();
         float moveSpeed = 5.0f;
 
         // Nestoras Cameo: Raycasts to the next position (ignoring the player and this object) and moves to the collision point instead of the holdArea. This avoids clipping and jittering.
-        if (Physics.Raycast(transform.position, holdArea.position + positionOffset - transform.position, out RaycastHit hit, Vector3.Distance(transform.position, holdArea.position + positionOffset), LayerMask.NameToLayer("Held Object") | LayerMask.NameToLayer("Player")))
+        if (Physics.Raycast(transform.position, holdArea.position - transform.position, out RaycastHit hit, Vector3.Distance(transform.position, holdArea.position), LayerMask.NameToLayer("Held Object") | LayerMask.NameToLayer("Player")))
         {
             transform.position = Vector3.Lerp(transform.position, hit.point, Time.deltaTime * moveSpeed);
         }
         else
         {
-            transform.position = Vector3.Lerp(transform.position, holdArea.position + positionOffset, Time.deltaTime * moveSpeed);
+            transform.position = Vector3.Lerp(transform.position, holdArea.position, Time.deltaTime * moveSpeed);
         }
-                // HERE
-       // transform.rotation = Quaternion.Slerp(transform.rotation, Camera.main.transform.rotation * rotationOffset, Time.deltaTime * moveSpeed);
+
+        transform.rotation = Quaternion.Slerp(transform.rotation, holdArea.rotation, Time.deltaTime * moveSpeed);
     }
 }

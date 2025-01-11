@@ -16,7 +16,7 @@ public class Red : MonoBehaviour
     private float Mass;
     [HideInInspector] public bool isHeld;
        
-    private float pickupRange = 2.0f;
+    private float pickupRange = 3.0f;
 
     UIManager uiManager;
 

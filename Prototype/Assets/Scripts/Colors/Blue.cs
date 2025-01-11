@@ -303,8 +303,8 @@ public class Blue : MonoBehaviour
         float threshold = 0.5f; // How close thisCollider has to get to otherCollider for the test to pass.
         if (Vector3.Distance(thisClosest, otherClosest) <= threshold)
         {
-            // If thisCollider is moving in the general direction of otherCollider (within 90 degrees), return true.
-            if (Vector3.Dot(otherClosest - thisClosest, moveDirection) > 0.5f) movingIntoCollider = true;
+            // If thisCollider is moving in the general direction of otherCollider (within 45 degrees), return true.
+            if (Vector3.Dot(otherClosest - thisClosest, moveDirection) > 0.25f) movingIntoCollider = true;
         }
 
         return movingIntoCollider;

@@ -148,7 +148,6 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 5745c82bbb78cf94f934cdc74edb0dec, type: 3}
   - {fileID: 2800000, guid: 3cdd4f5fa31083a4780f4f0fb7552be9, type: 3}
   - {fileID: 2800000, guid: 9a726038a7c38d146b2e5c49e08ee191, type: 3}
-  brushMaterial: {fileID: 2100000, guid: b5ebf40b9e5b201428d6725e5fa955e7, type: 2}
   softBoneRefference: {fileID: 1554681987770187842}
 --- !u!95 &2199556015861349350
 Animator:
@@ -703,6 +702,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1068802787542018088}
   - component: {fileID: 6873094179866964883}
+  - component: {fileID: 8277610459640710008}
   m_Layer: 3
   m_Name: Brush
   m_TagString: Untagged
@@ -784,6 +784,19 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.000002155546, y: 0.024616389, z: -0.00000078813173}
     m_Extent: {x: 0.0035516792, y: 0.024616389, z: 0.0035532287}
   m_DirtyAABB: 0
+--- !u!114 &8277610459640710008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8145626779150459817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 557645dd801db5c438af545a2a592a35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneLights: []
 --- !u!1 &8445686546564374312
 GameObject:
   m_ObjectHideFlags: 0

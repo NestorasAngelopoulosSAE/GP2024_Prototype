@@ -4,7 +4,6 @@
 /// Manages all things UI
 /// </summary>
 
-using EZhex1991.EZSoftBone;
 using UnityEngine;
 
 public class UIManager : MonoBehaviour
@@ -13,13 +12,12 @@ public class UIManager : MonoBehaviour
     public GameObject PauseMenu;
     public GameObject Player;
 
-    [Tooltip("A float to save the current EZSoftBone ConstantDeltaTime for the brush hairs so that it can be retrieved when resuming.")]
-    float brushPhysicsDeltaTime;
-
     void Start()
     {
         PauseMenu.SetActive(false);
-        brushPhysicsDeltaTime = Player.GetComponentInChildren<EZSoftBone>().constantDeltaTime;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
     
     void Update()
@@ -32,11 +30,10 @@ public class UIManager : MonoBehaviour
         isPaused = !isPaused;
         if (isPaused)
         {
-            Time.timeScale = 0f;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
 
-            Player.GetComponentInChildren<Animator>().enabled = false; // Stop brush animation
-            brushPhysicsDeltaTime = Player.GetComponentInChildren<EZSoftBone>().constantDeltaTime;
-            Player.GetComponentInChildren<EZSoftBone>().constantDeltaTime = 0f; // Stop brush physics
+            Time.timeScale = 0f;
 
             PauseMenu.SetActive(true);
             Player.GetComponent<PlayerController>().enabled = false;
@@ -44,10 +41,10 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            Time.timeScale = 1f;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
 
-            Player.GetComponentInChildren<Animator>().enabled = true; // Resume brush Animation
-            Player.GetComponentInChildren<EZSoftBone>().constantDeltaTime = brushPhysicsDeltaTime; // Resume brush Physics
+            Time.timeScale = 1f;
 
             PauseMenu.SetActive(false);
             Player.GetComponent<PlayerController>().enabled = true;

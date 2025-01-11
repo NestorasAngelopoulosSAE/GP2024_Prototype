@@ -11,7 +11,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Tutorial.unity
     guid: 80db29c5e8e862b4db6216fc43f10c08
-  - enabled: 1
-    path: Assets/Scenes/ColoringDemo.unity
-    guid: 01b3505b7e48d6e4ba4dfe783836c0ae
   m_configObjects: {}

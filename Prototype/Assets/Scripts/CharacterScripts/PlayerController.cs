@@ -53,9 +53,6 @@ public class PlayerController : MonoBehaviour
 
        // mainCamera.position += Vector3.up * 1.8f;
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
         uiManager = GameObject.FindGameObjectWithTag("Gameplay Manager").GetComponent<UIManager>();
     }
 

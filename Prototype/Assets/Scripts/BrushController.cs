@@ -12,16 +12,18 @@ public class BrushController : MonoBehaviour
     public Image Crosshair;
     public Texture defaultTexture;
     public Texture[] Textures;
-    public Material brushMaterial;
     public GameObject softBoneRefference;
     
     ColorManager colorManager;
+    SkinnedMeshRenderer skinnedMeshRenderer;
 
     private void Start()
     {
+        skinnedMeshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
+
         colorManager = GameObject.FindWithTag("Gameplay Manager").GetComponent<ColorManager>();
         if (!Crosshair) Crosshair = GameObject.Find("Crosshair").GetComponent<Image>();
-        //ChangeColor();
+        ChangeColor();
     }
 
     void Update()
@@ -31,12 +33,12 @@ public class BrushController : MonoBehaviour
 
     public void ChangeColor()
     {
-        brushMaterial.mainTexture = Textures[colorManager.selectedColor]; // Set brush color
+        skinnedMeshRenderer.material.SetTexture("_Texture", Textures[colorManager.selectedColor]); // Set brush color
         Crosshair.color = colorManager.GameplayColors[colorManager.selectedColor].color; // Set crosshair color
     }
 
     private void OnApplicationQuit()
     {
-         brushMaterial.mainTexture = defaultTexture; // Reset texture to be blank when not in playmode
+        skinnedMeshRenderer.material.SetTexture("_Texture", defaultTexture); // Reset texture to be blank when not in playmode
     }
 }

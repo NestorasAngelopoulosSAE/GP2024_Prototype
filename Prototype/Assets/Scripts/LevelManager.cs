@@ -49,4 +49,5 @@ public class LevelManager : MonoBehaviour
         EditorApplication.isPlaying = false;
 #endif
     }
+
 }

@@ -155,7 +155,10 @@ public class Blue : MonoBehaviour
                 Vector3 meshOffset = Vector3.zero;
 
                 // Get mesh from child's mesh filter.
-                if (child.GetComponent<MeshFilter>()) mesh = child.GetComponent<MeshFilter>().mesh;
+                if (child.GetComponent<MeshFilter>() && child.GetComponent<MeshFilter>().mesh.isReadable)
+                {
+                    mesh = child.GetComponent<MeshFilter>().mesh;
+                }
                 else // If object doesn't have a mesh filter, assume a bounding box and pray that its collider doesn't extend out of it.
                 {
                     mesh = Resources.GetBuiltinResource<Mesh>("Cube.fbx");

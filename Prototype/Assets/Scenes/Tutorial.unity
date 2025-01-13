@@ -5099,8 +5099,8 @@ GameObject:
   - component: {fileID: 247120480}
   - component: {fileID: 247120479}
   - component: {fileID: 247120478}
-  - component: {fileID: 247120482}
   - component: {fileID: 247120483}
+  - component: {fileID: 247120482}
   m_Layer: 0
   m_Name: Door
   m_TagString: Untagged
@@ -10604,6 +10604,7 @@ GameObject:
   - component: {fileID: 563250625}
   - component: {fileID: 563250624}
   - component: {fileID: 563250626}
+  - component: {fileID: 563250627}
   m_Layer: 0
   m_Name: Gameplay Manager
   m_TagString: Gameplay Manager
@@ -10673,6 +10674,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PauseMenu: {fileID: 1500317582}
   Player: {fileID: 4675960570100528142}
+--- !u!114 &563250627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 563250623}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 634fa54a8854b5341bef82ddc2fdcebf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &590018631
 GameObject:
   m_ObjectHideFlags: 0
@@ -12611,7 +12624,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1500317583
 RectTransform:
   m_ObjectHideFlags: 0

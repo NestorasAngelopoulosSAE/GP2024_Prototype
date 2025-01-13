@@ -15,10 +15,6 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         PauseMenu.SetActive(false);
-        if (isPaused)
-        {
-            TogglePause();
-        }
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;

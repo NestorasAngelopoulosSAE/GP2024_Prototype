@@ -11,14 +11,21 @@ using UnityEditor;
 
 public class LevelManager : MonoBehaviour
 {
+    void ResetTimeScale()
+    {
+        if (Time.timeScale == 0) Time.timeScale = 1;
+    }
+
     public void LoadMainMenu()
     {
         SceneManager.LoadScene(0);
+        ResetTimeScale();
     }
 
     public void Reload()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        ResetTimeScale();
     }
 
     public void Load(string levelName)
@@ -29,16 +36,19 @@ public class LevelManager : MonoBehaviour
     public void Load(int level)
     {
         SceneManager.LoadScene(level);
+        ResetTimeScale();
     }
 
     public void LoadNext()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        ResetTimeScale();
     }
 
     public void LoadPrevious()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
+        ResetTimeScale();
     }
 
     public void Quit()

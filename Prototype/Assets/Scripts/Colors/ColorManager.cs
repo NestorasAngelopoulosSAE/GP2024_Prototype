@@ -143,6 +143,27 @@ public class ColorManager : MonoBehaviour
                     // If the object has a timer script, start its timer.
                     if (GameplayColors[selectedColor].coloredObject.GetComponent<ScriptRemovalTimer>()) GameplayColors[selectedColor].coloredObject.GetComponent<ScriptRemovalTimer>().StartTimer();
                 }
+                else // Color the walls
+                {
+                    Debug.Log(hit.textureCoord);
+                    MeshRenderer meshRenderer = hit.transform.GetComponent<MeshRenderer>();
+                    Texture2D tex = meshRenderer.material.GetTexture("_Splat_Texture") as Texture2D;
+                    if (!tex)
+                    {
+                        Texture2D referenceTexture = meshRenderer.material.GetTexture("_Texture") as Texture2D;
+                        if (!referenceTexture)
+                        {
+                            //referenceTexture = new Texture2D(100, 100);
+                            referenceTexture = Texture2D.whiteTexture;
+                        }
+                        tex = new Texture2D(referenceTexture.width, referenceTexture.height);
+                        //tex.SetPixels(0, 0, tex.width , tex.height, new Color[] { Color.white });
+                    }
+                    Debug.Log(hit.textureCoord.x * tex.width);
+                    tex.SetPixel((int) (hit.textureCoord.x * (tex.width)), (int) (hit.textureCoord.y * (tex.height)), GameplayColors[selectedColor].color);
+                    tex.Apply();
+                    meshRenderer.material.SetTexture("_Splat_Texture", tex);
+                }
             }
         }
         else if (Input.GetMouseButtonDown(1)) // Remove color from object when right click is presesd.

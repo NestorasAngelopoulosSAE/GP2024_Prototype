@@ -113,7 +113,8 @@ public class ColorManager : MonoBehaviour
             brushAnimator.SetTrigger("Apply");
 
             // If colorable, change the color of the object the player is looking at.
-            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.TransformDirection(Vector3.forward), out RaycastHit hit, Mathf.Infinity))
+            LayerMask raycastLayers = Physics.AllLayers & ~(1 << LayerMask.NameToLayer("Player")) & ~(1 << LayerMask.NameToLayer("Ignore Raycast"));
+            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.TransformDirection(Vector3.forward), out RaycastHit hit, Mathf.Infinity, raycastLayers))
             {
                 if (hit.collider.gameObject.tag == "Colorable")
                 {

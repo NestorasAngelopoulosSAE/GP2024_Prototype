@@ -8,6 +8,7 @@ using UnityEngine.Events;
 
 public class Button : MonoBehaviour
 {
+
     // Unity event Vars...
     public UnityEvent onButtonPressed;
     public UnityEvent onButtonReleased;  
@@ -23,7 +24,7 @@ public class Button : MonoBehaviour
     void Start()
     {
         //Limits 
-        startingY = transform.localPosition.y;
+        startingY = transform.parent.localPosition.y;
         pressedY = startingY - 0.124f;
 
         // Creating the Unity events
@@ -71,15 +72,15 @@ public class Button : MonoBehaviour
     {         
         if (ThingsOnMyButton > 0)
         {
-            targetPosition = new Vector3(transform.localPosition.x, pressedY, transform.localPosition.z);
+            targetPosition = new Vector3(transform.parent.localPosition.x, pressedY, transform.parent.localPosition.z);
 
-            transform.localPosition = Vector3.Lerp(transform.localPosition, targetPosition, Time.deltaTime * speed);  
+            transform.parent.localPosition = Vector3.Lerp(transform.parent.localPosition, targetPosition, Time.deltaTime * speed);  
         }
         else
         {
-            targetPosition = new Vector3(transform.localPosition.x, startingY, transform.localPosition.z);
+            targetPosition = new Vector3(transform.parent.localPosition.x, startingY, transform.parent.localPosition.z);
 
-            transform.localPosition = Vector3.Lerp(transform.localPosition, targetPosition, Time.deltaTime * speed);
+            transform.parent.localPosition = Vector3.Lerp(transform.parent.localPosition, targetPosition, Time.deltaTime * speed);
         }
     }
 }

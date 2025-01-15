@@ -11,7 +11,8 @@ public class Door : MonoBehaviour
     public bool isOpen;
     public Vector3 closedPosition;
     public Vector3 openPosition;
-    public float speed = 1f;
+    public float openSpeed = 1f;
+    public float closeSpeed = 1f;
 
     private void Reset() // Set default positions to describe door motion when applying component to object
     {
@@ -21,8 +22,8 @@ public class Door : MonoBehaviour
 
     private void Update()
     {
-        if (isOpen) transform.position = Vector3.MoveTowards(transform.position, openPosition, Time.deltaTime * speed);
-        else transform.position = Vector3.MoveTowards(transform.position, closedPosition, Time.deltaTime * speed);
+        if (isOpen) transform.position = Vector3.MoveTowards(transform.position, openPosition, Time.deltaTime * openSpeed);
+        else transform.position = Vector3.MoveTowards(transform.position, closedPosition, Time.deltaTime * closeSpeed);
     }
 
     public void Open()

@@ -21,8 +21,11 @@ public class DoorEditor : Editor
 
         door = (Door)target; // Get the script whose values we're displaying
 
-        door.speed = EditorGUILayout.FloatField("Open / Close Speed", door.speed); // Display the speed parameter
-        if (door.speed < 0) door.speed = 0;
+        // Display the speed parameters
+        door.openSpeed = EditorGUILayout.FloatField("Open Speed", door.openSpeed);
+        if (door.openSpeed < 0) door.openSpeed = 0;
+        door.closeSpeed = EditorGUILayout.FloatField("Close Speed", door.closeSpeed);
+        if (door.closeSpeed < 0) door.closeSpeed = 0;
 
         // Syncronization in line 109 breaks the door when rapid calls to toggle its state occure while looking at the door's inspector
         if (Application.isPlaying) GUI.enabled = false;

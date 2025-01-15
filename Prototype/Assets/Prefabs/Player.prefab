@@ -106,6 +106,7 @@ GameObject:
   - component: {fileID: 4925582614545684392}
   - component: {fileID: 2199556015861349350}
   - component: {fileID: 8196965068303538507}
+  - component: {fileID: 8715934996711093949}
   m_Layer: 3
   m_Name: Brush
   m_TagString: Untagged
@@ -231,6 +232,18 @@ MonoBehaviour:
   m_ForceModule: {fileID: 0}
   m_ForceScale: 1
   m_SimulateSpace: {fileID: 8517693885753921331}
+--- !u!114 &8715934996711093949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2968265068220983616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fbb2ba53c1139845b773da0db95bd3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3076360669961791168
 GameObject:
   m_ObjectHideFlags: 0

@@ -8,9 +8,13 @@ using UnityEngine;
 
 public class ToonHelper : MonoBehaviour
 {
+    static readonly int m_SecondaryLightDirectionId = Shader.PropertyToID("_Secondary_Light_Direction");
+    static readonly int m_SecondaryLightColorId = Shader.PropertyToID("_Secondary_Light_Color");
+    
     public List<Light> sceneLights = new List<Light>();
     MeshRenderer meshRenderer;
     SkinnedMeshRenderer skinnedMeshRenderer;
+
 
     void Start()
     {
@@ -41,20 +45,20 @@ public class ToonHelper : MonoBehaviour
         if (closestLight)
         {
             // Pass the direction and color of the closest light to the shader.
-            if (meshRenderer) meshRenderer.material.SetVector("_Secondary_Light_Direction", (transform.position - closestLight.transform.position).normalized);
-            else skinnedMeshRenderer.material.SetVector("_Secondary_Light_Direction", (transform.position - closestLight.transform.position).normalized);
+            if (meshRenderer) meshRenderer.material.SetVector(m_SecondaryLightDirectionId, (transform.position - closestLight.transform.position).normalized);
+            else skinnedMeshRenderer.material.SetVector(m_SecondaryLightDirectionId, (transform.position - closestLight.transform.position).normalized);
 
             // Calculate the falloff in light intensity and darken the color accordingly. 
             float attenuation = 1 / Vector3.Distance(transform.position, closestLight.transform.position);
             Color secondaryColor = closestLight.color * closestLight.intensity * Mathf.Clamp01(attenuation);
             secondaryColor.a = attenuation;
-            if (meshRenderer) meshRenderer.material.SetColor("_Secondary_Light_Color", secondaryColor);
-            else skinnedMeshRenderer.material.SetColor("_Secondary_Light_Color", secondaryColor);
+            if (meshRenderer) meshRenderer.material.SetColor(m_SecondaryLightColorId, secondaryColor);
+            else skinnedMeshRenderer.material.SetColor(m_SecondaryLightColorId, secondaryColor);
         }
         else
         {
-            if (meshRenderer) meshRenderer.material.SetColor("_Secondary_Light_Color", Color.black);
-            else skinnedMeshRenderer.material.SetColor("_Secondary_Light_Color", Color.black);
+            if (meshRenderer) meshRenderer.material.SetColor(m_SecondaryLightColorId, Color.black);
+            else skinnedMeshRenderer.material.SetColor(m_SecondaryLightColorId, Color.black);
         }
     }
 }

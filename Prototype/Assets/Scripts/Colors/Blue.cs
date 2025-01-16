@@ -111,7 +111,7 @@ public class Blue : MonoBehaviour
         // Re-calculate the moveDirection if the player clicks the platform.
         if (Input.GetMouseButtonDown(0))
         {
-            LayerMask raycastLayers = Physics.AllLayers & ~(1 << LayerMask.NameToLayer("Player")) & ~(1 << LayerMask.NameToLayer("Ignore Raycast"));
+            LayerMask raycastLayers = Physics.AllLayers & ~(1 << LayerMask.NameToLayer("Player")) & ~(1 << LayerMask.NameToLayer("Ignore Raycast")) & ~(1 << LayerMask.NameToLayer("Splat"));
             if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.TransformDirection(Vector3.forward), out RaycastHit hit, Mathf.Infinity, raycastLayers))
             {
                 if (hit.transform == transform) GetMoveDirection();

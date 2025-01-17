@@ -12,7 +12,6 @@ public class Splat : MonoBehaviour
 
     public Texture2D emptyTexture;
     public Material splatMaterial;
-    public GameObject planePrefab;
 
     void Start()
     {
@@ -60,12 +59,9 @@ public class Splat : MonoBehaviour
                 {
                     if (color == Color.clear) return; // Return if this won't have any effect on the object.
 
-                    // Create a new texture that's 100 by 100 pixels times the scale of the object.
-                    int scalex = (int)(hit.transform.lossyScale.x * 100);
-                    int scaley = (int)(hit.transform.lossyScale.z * 100);
-                    if (scalex < 1) scalex = 1; if (scaley < 1) scaley = 1;
-                    tex = new Texture2D(scalex, scaley);
-                    Color[] canvas = new Color[scalex * scaley];
+                    // Create a new texture that's 1000 by 1000 pixels
+                    tex = new Texture2D(1000, 1000);
+                    Color[] canvas = new Color[1000 * 1000];
 
                     // Set it to plain white.
                     for (int i = 0; i < canvas.Length; i++) canvas[i] = Color.clear;
@@ -78,26 +74,28 @@ public class Splat : MonoBehaviour
 
                 // Get UV point corresponding to hit point.
                 Vector2 center = hit.textureCoord;
+                int x = (int)(center.x * tex.width);
+                int y = (int)(center.y * tex.height);
 
                 // Paint cross of pixels.
-                tex.SetPixel((int)(center.x * tex.width), (int)(center.y * tex.height), color);
-                tex.SetPixel((int)(center.x * tex.width) + 1, (int)(center.y * tex.height), color);
-                tex.SetPixel((int)(center.x * tex.width), (int)(center.y * tex.height) + 1, color);
-                tex.SetPixel((int)(center.x * tex.width) - 1, (int)(center.y * tex.height), color);
-                tex.SetPixel((int)(center.x * tex.width), (int)(center.y * tex.height) - 1, color);
+                tex.SetPixel(x, y, color);
+                tex.SetPixel(x + 1, y, color);
+                tex.SetPixel(x, y + 1, color);
+                tex.SetPixel(x - 1, y, color);
+                tex.SetPixel(x, y - 1, color);
 
                 // Make erasing have a bigger brush.
                 if (color == Color.clear)
                 {
-                    tex.SetPixel((int)(center.x * tex.width) + 1, (int)(center.y * tex.height) + 1, color);
-                    tex.SetPixel((int)(center.x * tex.width) + 1, (int)(center.y * tex.height) - 1, color);
-                    tex.SetPixel((int)(center.x * tex.width) - 1, (int)(center.y * tex.height) + 1, color);
-                    tex.SetPixel((int)(center.x * tex.width) - 1, (int)(center.y * tex.height) - 1, color);
+                    tex.SetPixel(x + 1, y + 1, color);
+                    tex.SetPixel(x + 1, y - 1, color);
+                    tex.SetPixel(x - 1, y + 1, color);
+                    tex.SetPixel(x - 1, y - 1, color);
 
-                    tex.SetPixel((int)(center.x * tex.width) + 2, (int)(center.y * tex.height), color);
-                    tex.SetPixel((int)(center.x * tex.width), (int)(center.y * tex.height) + 2, color);
-                    tex.SetPixel((int)(center.x * tex.width) - 2, (int)(center.y * tex.height), color);
-                    tex.SetPixel((int)(center.x * tex.width), (int)(center.y * tex.height) - 2, color);
+                    tex.SetPixel(x + 2, y, color);
+                    tex.SetPixel(x, y + 2, color);
+                    tex.SetPixel(x - 2, y, color);
+                    tex.SetPixel(x, y - 2, color);
                 }
 
                 tex.Apply();

@@ -8,7 +8,7 @@ using UnityEngine;
 
 public class ToonHelper : MonoBehaviour
 {
-    static readonly int m_SecondaryLightDirectionId = Shader.PropertyToID("_Secondary_Light_Direction");
+    static readonly int m_SecondaryLightPositionId = Shader.PropertyToID("_Secondary_Light_Position");
     static readonly int m_SecondaryLightColorId = Shader.PropertyToID("_Secondary_Light_Color");
     
     public List<Light> sceneLights = new List<Light>();
@@ -44,14 +44,12 @@ public class ToonHelper : MonoBehaviour
 
         if (closestLight)
         {
-            // Pass the direction and color of the closest light to the shader.
-            if (meshRenderer) meshRenderer.material.SetVector(m_SecondaryLightDirectionId, (transform.position - closestLight.transform.position).normalized);
-            else skinnedMeshRenderer.material.SetVector(m_SecondaryLightDirectionId, (transform.position - closestLight.transform.position).normalized);
+            // Pass the position and color of the closest light to the shader.
+            if (meshRenderer) meshRenderer.material.SetVector(m_SecondaryLightPositionId, closestLight.transform.position);
+            else skinnedMeshRenderer.material.SetVector(m_SecondaryLightPositionId, closestLight.transform.position);
 
-            // Calculate the falloff in light intensity and darken the color accordingly. 
-            float attenuation = 1 / Vector3.Distance(transform.position, closestLight.transform.position);
-            Color secondaryColor = closestLight.color * closestLight.intensity * Mathf.Clamp01(attenuation);
-            secondaryColor.a = attenuation;
+            Color secondaryColor = closestLight.color;
+            secondaryColor.a = closestLight.intensity;
             if (meshRenderer) meshRenderer.material.SetColor(m_SecondaryLightColorId, secondaryColor);
             else skinnedMeshRenderer.material.SetColor(m_SecondaryLightColorId, secondaryColor);
         }

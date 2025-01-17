@@ -108,7 +108,7 @@ public class Red : MonoBehaviour
         transform.parent = null;
 
         if (Vector3.Distance(transform.position, holdArea.position) > 5f) DropObject();
-        float moveSpeed = 5.0f;
+        float moveSpeed = 7.5f;
 
         // Nestoras Cameo: Raycasts to the next position (ignoring the player and this object) and moves to the collision point instead of the holdArea. This avoids clipping and jittering.
         if (Physics.Raycast(transform.position, holdArea.position - transform.position, out RaycastHit hit, Vector3.Distance(transform.position, holdArea.position), LayerMask.NameToLayer("Held Object") | LayerMask.NameToLayer("Player")))

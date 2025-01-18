@@ -1,7 +1,7 @@
 /// <summary>
 /// Nestoras Angelopoulos 2025
 /// 
-/// Generates textures for and paints Splat Catchers with the selected color.
+/// Generates textures for, and paints Splat Catchers with the selected color, based on a bitmap texture.
 /// </summary>
 using UnityEngine;
 
@@ -11,28 +11,15 @@ public class Splat : MonoBehaviour
     UIManager uiManager;
 
     public Texture2D emptyTexture;
+    public Texture2D brushTexture;
     public Material splatMaterial;
+
+    [SerializeField] bool AllowColorMixing;
 
     void Start()
     {
         colorManager = GameObject.FindWithTag("Gameplay Manager").GetComponent<ColorManager>();
         uiManager = GameObject.FindGameObjectWithTag("Gameplay Manager").GetComponent<UIManager>();
-
-        // Make sure the shader renders properly for the Player.
-        splatMaterial.SetFloat(Shader.PropertyToID("_ZTest"), (int)UnityEngine.Rendering.CompareFunction.LessEqual);
-        //splatMaterial.SetFloat(Shader.PropertyToID("_Cull"), (int)UnityEngine.Rendering.CullMode.Back);
-        if (splatMaterial.GetInt("_VISUALIZE") == 1) wasVisualised = true;
-        splatMaterial.SetInt("_VISUALIZE", 0);
-    }
-
-    bool wasVisualised;
-
-    private void OnDisable()
-    {
-        // Reset shader properties for in-editor visualization.
-        splatMaterial.SetFloat(Shader.PropertyToID("_ZTest"), (int)UnityEngine.Rendering.CompareFunction.Always);
-        //splatMaterial.SetFloat(Shader.PropertyToID("_Cull"), (int)UnityEngine.Rendering.CullMode.Off);
-        if (wasVisualised) splatMaterial.SetInt("_VISUALIZE", 1);
     }
 
     void Update()
@@ -59,11 +46,11 @@ public class Splat : MonoBehaviour
                 {
                     if (color == Color.clear) return; // Return if this won't have any effect on the object.
 
-                    // Create a new texture that's 1000 by 1000 pixels
-                    tex = new Texture2D(1000, 1000);
-                    Color[] canvas = new Color[1000 * 1000];
+                    // Create a new texture that's 2000 by 2000 pixels
+                    tex = new Texture2D(2000, 2000);
+                    Color[] canvas = new Color[2000 * 2000];
 
-                    // Set it to plain white.
+                    // Make it transparent.
                     for (int i = 0; i < canvas.Length; i++) canvas[i] = Color.clear;
                     tex.SetPixels(canvas);
                     // Make sure it's sharp and doesn't repeat at the edges.
@@ -74,28 +61,22 @@ public class Splat : MonoBehaviour
 
                 // Get UV point corresponding to hit point.
                 Vector2 center = hit.textureCoord;
-                int x = (int)(center.x * tex.width);
-                int y = (int)(center.y * tex.height);
-
-                // Paint cross of pixels.
-                tex.SetPixel(x, y, color);
-                tex.SetPixel(x + 1, y, color);
-                tex.SetPixel(x, y + 1, color);
-                tex.SetPixel(x - 1, y, color);
-                tex.SetPixel(x, y - 1, color);
-
-                // Make erasing have a bigger brush.
-                if (color == Color.clear)
+                center.x *= tex.width;
+                center.y *= tex.height;
+                
+                // Paint the pixels according to the bitmap provided.
+                for (int i = 0; i < brushTexture.width; i++)
                 {
-                    tex.SetPixel(x + 1, y + 1, color);
-                    tex.SetPixel(x + 1, y - 1, color);
-                    tex.SetPixel(x - 1, y + 1, color);
-                    tex.SetPixel(x - 1, y - 1, color);
-
-                    tex.SetPixel(x + 2, y, color);
-                    tex.SetPixel(x, y + 2, color);
-                    tex.SetPixel(x - 2, y, color);
-                    tex.SetPixel(x, y - 2, color);
+                    for (int j = 0; j < brushTexture.height; j++)
+                    {
+                        int x = (int)(center.x - brushTexture.width / 2 + i);
+                        int y = (int)(center.y - brushTexture.height / 2 + j);
+                        Color bitmapColor = brushTexture.GetPixel(i, j);
+                        if (bitmapColor == Color.black) continue;
+                        
+                        if (AllowColorMixing && color != Color.clear) tex.SetPixel(x, y, tex.GetPixel(x, y) + color * bitmapColor);
+                        else tex.SetPixel(x, y, color * bitmapColor);
+                    }
                 }
 
                 tex.Apply();

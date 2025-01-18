@@ -24,8 +24,8 @@ Material:
   stringTagMap:
     RenderType: Transparent
   disabledShaderPasses:
-  - DepthOnly
   - SHADOWCASTER
+  - DepthOnly
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -73,7 +73,7 @@ Material:
     - _SrcBlend: 5
     - _Surface: 1
     - _VISUALIZE: 0
-    - _ZTest: 8
+    - _ZTest: 4
     - _ZWrite: 0
     - _ZWriteControl: 0
     m_Colors:

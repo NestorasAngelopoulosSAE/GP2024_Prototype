@@ -245,7 +245,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   emptyTexture: {fileID: 2800000, guid: b3cff6c2af9298d42943bd133be5e214, type: 3}
+  brushTexture: {fileID: 2800000, guid: a4531e3fef07b4e47acea9043497dd50, type: 3}
   splatMaterial: {fileID: 2100000, guid: 46b2edab3bc0e6644846f163c3b0a4ac, type: 2}
+  AllowColorMixing: 0
 --- !u!1 &3076360669961791168
 GameObject:
   m_ObjectHideFlags: 0

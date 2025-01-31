@@ -237,6 +237,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneLights: []
+--- !u!23 &8617907 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: 3e9da64da6073a54ab1c644ed6067342, type: 3}
+  m_PrefabInstance: {fileID: 8617900}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &22473035
 GameObject:
   m_ObjectHideFlags: 0
@@ -15118,6 +15123,10 @@ PrefabInstance:
       propertyPath: brushSize
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 8715934996711093949, guid: bfba9d59b0b4f8a49982fd73eb8dc0b5, type: 3}
+      propertyPath: meshRenderer
+      value: 
+      objectReference: {fileID: 8617907}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

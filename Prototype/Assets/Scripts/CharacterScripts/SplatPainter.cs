@@ -4,6 +4,7 @@
 /// Generates textures for, and paints Splat Catchers with the selected color, based on a bitmap texture.
 /// </summary>
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class Splat : MonoBehaviour
 {
@@ -16,18 +17,49 @@ public class Splat : MonoBehaviour
 
     [SerializeField] bool AllowColorMixing;
 
+    [SerializeField] AudioMixerGroup SFXGroup;
+    AudioSource audioSource;
+    [SerializeField] AudioClip brushStrokeLoop;
+    float pitch = 1;
+
+    bool currentlyPainting;
+    float targetVolume = 0.5f;
+
     void Start()
     {
         colorManager = GameObject.FindWithTag("Gameplay Manager").GetComponent<ColorManager>();
         uiManager = GameObject.FindGameObjectWithTag("Gameplay Manager").GetComponent<UIManager>();
+
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.outputAudioMixerGroup = SFXGroup;
+        audioSource.clip = brushStrokeLoop;
+        audioSource.loop = true;
+        audioSource.volume = 0;
+        audioSource.Play();
     }
 
     void Update()
     {
-        if (uiManager.isPaused) return;
+        if (uiManager.isPaused)
+        {
+            audioSource.volume = 0f;
+            return;
+        }
 
         if (Input.GetMouseButton(0) && colorManager.selectedColor != -1) PaintObject(colorManager.GameplayColors[colorManager.selectedColor].color);
         else if (Input.GetMouseButton(1)) PaintObject(Color.clear);
+
+        // Change pitch up and down.
+        float recenterMultiplier = 2;
+        pitch += Random.Range(-0.5f, 0.5f) * Time.deltaTime * (1 + (Mathf.Abs(1 - pitch) * recenterMultiplier));
+        pitch = Mathf.Clamp(pitch, 0.8f, 1.2f);
+        audioSource.pitch = pitch;
+
+        // Fade SFX in and out.
+        if (currentlyPainting) audioSource.volume = Mathf.Lerp(audioSource.volume, targetVolume, 4 * Time.deltaTime);
+        else audioSource.volume = Mathf.Lerp(audioSource.volume, 0, 8 * Time.deltaTime);
+
+        currentlyPainting = false;
     }
 
     void PaintObject(Color color)
@@ -38,6 +70,9 @@ public class Splat : MonoBehaviour
         {
             if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Splat"))
             {
+                // Play brush sound.
+                if (color != Color.clear) currentlyPainting = true;
+
                 MeshRenderer meshRenderer = hit.transform.GetComponent<MeshRenderer>();
 
                 // Get already applied texture.
@@ -49,6 +84,8 @@ public class Splat : MonoBehaviour
                     // Create a new texture that's 2000 by 2000 pixels
                     tex = new Texture2D(2000, 2000);
                     Color[] canvas = new Color[2000 * 2000];
+
+                    Debug.Log($"{tex.width} {tex.height}");
 
                     // Make it transparent.
                     for (int i = 0; i < canvas.Length; i++) canvas[i] = Color.clear;

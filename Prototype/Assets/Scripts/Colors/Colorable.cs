@@ -7,24 +7,32 @@
 /// </summary>
 using System;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class Colorable : MonoBehaviour
 {
     ColorManager colorManager;
-    Renderer myRenderer;
+    Renderer meshRenderer;
+    AudioSource audioSource;
+    [SerializeField] AudioMixerGroup SFXGroup;
+    [SerializeField] AudioClip respawnSound;
 
     float threshold;
     float speed = 5;
 
     Vector3 SpawnPosition;
     Quaternion SpawnRotation;
-    Rigidbody rigidbody;
+    Rigidbody rb;
 
     void Start()
     {
-
-        myRenderer = GetComponent<Renderer>();
+        meshRenderer = GetComponent<Renderer>();
         colorManager = GameObject.FindWithTag("Gameplay Manager").GetComponent<ColorManager>();
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.outputAudioMixerGroup = SFXGroup;
+        audioSource.clip = respawnSound;
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 1;
 
         gameObject.tag = "Colorable";
         // Add a ride trigger so that a stack of objects can all move along with a moving platform.
@@ -32,10 +40,9 @@ public class Colorable : MonoBehaviour
         // Give object a helper script to manage the secondary light interactions with the toon shader.
         if (!GetComponent<ToonHelper>()) gameObject.AddComponent<ToonHelper>();
 
-        if (GetComponent<ScriptRemovalTimer>()) myRenderer.material.SetInt("_Is_Timer", 1);
+        if (GetComponent<ScriptRemovalTimer>()) meshRenderer.material.SetInt("_Is_Timer", 1);
 
-
-        rigidbody = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
         SpawnPosition = transform.position;
         SpawnRotation = transform.rotation;
     }
@@ -45,18 +52,19 @@ public class Colorable : MonoBehaviour
         // Respawn object if it fell off the map.
         if (transform.position.y < -53f)
         {
-            rigidbody.velocity = Vector3.zero;
-            rigidbody.angularVelocity = Vector3.zero;
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
 
             transform.position = SpawnPosition;
             transform.rotation = SpawnRotation;
+            audioSource.Play();
         }
     }
 
     private void LateUpdate()
     {
         threshold += Time.deltaTime * speed;
-        myRenderer.material.SetFloat("_Threshold", threshold);
+        meshRenderer.material.SetFloat("_Threshold", threshold);
     }
 
     public void SetColor(GameplayColor newColor, bool clearColor, Vector3 hitPosition)
@@ -72,10 +80,10 @@ public class Colorable : MonoBehaviour
 
         if (clearColor) // Update the shader.
         {
-            Color lastColor = myRenderer.material.GetColor("_Inside_Color");
-            myRenderer.material.SetColor("_Inside_Color", newColor.color);
-            myRenderer.material.SetColor("_Outside_Color", lastColor);
-            myRenderer.material.SetVector("_Hit_Position", transform.InverseTransformPoint(hitPosition));
+            Color lastColor = meshRenderer.material.GetColor("_Inside_Color");
+            meshRenderer.material.SetColor("_Inside_Color", newColor.color);
+            meshRenderer.material.SetColor("_Outside_Color", lastColor);
+            meshRenderer.material.SetVector("_Hit_Position", transform.InverseTransformPoint(hitPosition));
             threshold = 0;
         }
     }

@@ -33,7 +33,7 @@ public class ColorManager : MonoBehaviour
     [Tooltip("When enabled, blue movement is based on the orientation of the colorable object, and the position of the player with regards to it.\n\n(Recommended)\nWhen disabled, the object can only move towards the world space X and Z axis. The direction is determined not by the player's position, but the direction the player is facing.")]
     public bool allowBlueVertical;
 
-    public int selectedColor;
+    public int selectedColor = -1;
     
     public GameplayColor[] GameplayColors;
 

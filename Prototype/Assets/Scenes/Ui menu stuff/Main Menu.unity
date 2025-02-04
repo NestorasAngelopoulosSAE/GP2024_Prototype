@@ -9427,9 +9427,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   masterMixer: {fileID: 24100000, guid: ab2cb8d099f93eb49841dbc81fdf59ca, type: 2}
-  SFXSlider: {fileID: 0}
-  MasterSlider: {fileID: 0}
-  MusicSlider: {fileID: 0}
+  SFXSlider: {fileID: 752575963}
+  MasterSlider: {fileID: 2123320959}
+  MusicSlider: {fileID: 649427455}
 --- !u!114 &2135396499
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9457,6 +9457,63 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerController: {fileID: 0}
   SensitivitySlider: {fileID: 549556184}
+--- !u!1001 &7911585437816648776
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1454601083044488579, guid: e5c512b20f1bfd3409cb0c9a9e8883c6, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1454601083044488579, guid: e5c512b20f1bfd3409cb0c9a9e8883c6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1454601083044488579, guid: e5c512b20f1bfd3409cb0c9a9e8883c6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1454601083044488579, guid: e5c512b20f1bfd3409cb0c9a9e8883c6, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1454601083044488579, guid: e5c512b20f1bfd3409cb0c9a9e8883c6, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1454601083044488579, guid: e5c512b20f1bfd3409cb0c9a9e8883c6, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1454601083044488579, guid: e5c512b20f1bfd3409cb0c9a9e8883c6, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1454601083044488579, guid: e5c512b20f1bfd3409cb0c9a9e8883c6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1454601083044488579, guid: e5c512b20f1bfd3409cb0c9a9e8883c6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1454601083044488579, guid: e5c512b20f1bfd3409cb0c9a9e8883c6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4852746927619244433, guid: e5c512b20f1bfd3409cb0c9a9e8883c6, type: 3}
+      propertyPath: m_Name
+      value: Jukebox
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e5c512b20f1bfd3409cb0c9a9e8883c6, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -9466,3 +9523,4 @@ SceneRoots:
   - {fileID: 336966399}
   - {fileID: 2135396497}
   - {fileID: 422168141}
+  - {fileID: 7911585437816648776}

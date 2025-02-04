@@ -50,6 +50,8 @@ public class Splat : MonoBehaviour
                     tex = new Texture2D(2000, 2000);
                     Color[] canvas = new Color[2000 * 2000];
 
+                    Debug.Log($"{tex.width} {tex.height}");
+
                     // Make it transparent.
                     for (int i = 0; i < canvas.Length; i++) canvas[i] = Color.clear;
                     tex.SetPixels(canvas);

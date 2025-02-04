@@ -60,7 +60,7 @@ Material:
     - _AlphaToMask: 0
     - _Blend: 0
     - _CastShadows: 0
-    - _Cull: 0
+    - _Cull: 2
     - _Dark_Brightness: 0.75
     - _DstBlend: 10
     - _Fresnel_Power: 1

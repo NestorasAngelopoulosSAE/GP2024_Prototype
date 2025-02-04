@@ -8,7 +8,7 @@ public class addForce : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Colorable"))
         {
-            other.gameObject.GetComponent<Rigidbody>().AddForce(speed * Vector3.right * speed , ForceMode.Impulse);
+            other.gameObject.GetComponent<Rigidbody>().AddForce(Vector3.up + Vector3.right * speed , ForceMode.Impulse);
         }
     }
 }

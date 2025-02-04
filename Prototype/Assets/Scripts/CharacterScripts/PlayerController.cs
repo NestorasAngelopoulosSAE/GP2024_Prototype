@@ -36,6 +36,10 @@ public class PlayerController : MonoBehaviour
     Vector3 direction;
     Vector3 jumpDirection = Vector3.zero;
 
+    //Spawn
+    Vector3 SpawnPosition;
+    Quaternion SpawnRotation;
+
     UIManager uiManager;
 
     // Start is called before the first frame update
@@ -54,6 +58,10 @@ public class PlayerController : MonoBehaviour
        // mainCamera.position += Vector3.up * 1.8f;
 
         uiManager = GameObject.FindGameObjectWithTag("Gameplay Manager").GetComponent<UIManager>();
+
+        //Set spawn
+        SpawnPosition = transform.position;
+        SpawnRotation = transform.rotation;
     }
 
     // Update is called once per frame
@@ -109,6 +117,14 @@ public class PlayerController : MonoBehaviour
         cameraRotationX += mouseVert * rotationSpeed * mouseInvertY;
         cameraRotationX = Mathf.Clamp(cameraRotationX, -85, 85);
         mainCamera.localEulerAngles = new Vector3(cameraRotationX, 0, 0);
+
+
+        // Respawn player
+        if (transform.position.y < -30f)
+        { 
+            transform.position = SpawnPosition;
+            transform.rotation = SpawnRotation;
+        }
 
     }
 }

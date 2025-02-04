@@ -5,21 +5,31 @@
 /// </summary>
 
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.UI;
 
 public class BrushController : MonoBehaviour
 {
-    public Image Crosshair;
-    public Texture defaultTexture;
-    public Texture[] Textures;
-    public GameObject softBoneRefference;
+    [SerializeField] Image Crosshair;
+    [SerializeField] Texture defaultTexture;
+    [SerializeField] Texture[] Textures;
+    [SerializeField] GameObject softBoneRefference;
     
     ColorManager colorManager;
     SkinnedMeshRenderer skinnedMeshRenderer;
 
+    [SerializeField] AudioMixerGroup SFXGroup;
+    AudioSource audioSource;
+    [SerializeField] AudioClip[] brushWhooshes;
+
     private void Start()
     {
         skinnedMeshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
+
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.outputAudioMixerGroup = SFXGroup;
+        audioSource.playOnAwake = false;
+        audioSource.volume = 0.5f;
 
         colorManager = GameObject.FindWithTag("Gameplay Manager").GetComponent<ColorManager>();
         if (!Crosshair) Crosshair = GameObject.Find("Crosshair").GetComponent<Image>();
@@ -40,5 +50,16 @@ public class BrushController : MonoBehaviour
     private void OnApplicationQuit()
     {
         skinnedMeshRenderer.material.SetTexture("_Texture", defaultTexture); // Reset texture to be blank when not in playmode
+    }
+
+    public void PlayWhooshSound(float basePitch)
+    {
+        if (brushWhooshes.Length > 0)
+        {
+            audioSource.clip = brushWhooshes[Random.Range(0, brushWhooshes.Length)];
+            audioSource.pitch = basePitch + Random.Range(-0.05f, 0.05f);
+            audioSource.Play();
+        }
+        else Debug.LogError("No brush sounds in brush controller.");
     }
 }

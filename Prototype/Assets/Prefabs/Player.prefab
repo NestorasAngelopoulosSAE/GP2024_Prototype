@@ -150,6 +150,13 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 3cdd4f5fa31083a4780f4f0fb7552be9, type: 3}
   - {fileID: 2800000, guid: 9a726038a7c38d146b2e5c49e08ee191, type: 3}
   softBoneRefference: {fileID: 1554681987770187842}
+  SFXGroup: {fileID: 4182141226645221245, guid: ab2cb8d099f93eb49841dbc81fdf59ca, type: 2}
+  brushWhooshes:
+  - {fileID: 8300000, guid: 3f822f9ec5b214949a099b017397a83e, type: 3}
+  - {fileID: 8300000, guid: f8c21b5417263ca4ba8632461141e8ad, type: 3}
+  - {fileID: 8300000, guid: 02f7a1672062bdd4992ea80073da63e2, type: 3}
+  - {fileID: 8300000, guid: 24aec71674c17c64485d09436eba464a, type: 3}
+  - {fileID: 8300000, guid: 16a20c45e9071f7438e2e2af74801e84, type: 3}
 --- !u!95 &2199556015861349350
 Animator:
   serializedVersion: 5
@@ -248,6 +255,8 @@ MonoBehaviour:
   brushTexture: {fileID: 2800000, guid: a4531e3fef07b4e47acea9043497dd50, type: 3}
   splatMaterial: {fileID: 2100000, guid: 46b2edab3bc0e6644846f163c3b0a4ac, type: 2}
   AllowColorMixing: 0
+  SFXGroup: {fileID: 4182141226645221245, guid: ab2cb8d099f93eb49841dbc81fdf59ca, type: 2}
+  brushStrokeLoop: {fileID: 8300000, guid: 324c502058230dd469733623328cdfd9, type: 3}
 --- !u!1 &3076360669961791168
 GameObject:
   m_ObjectHideFlags: 0

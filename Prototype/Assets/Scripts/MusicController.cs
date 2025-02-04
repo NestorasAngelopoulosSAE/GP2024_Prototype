@@ -11,12 +11,11 @@ public class MusicController : MonoBehaviour
 {
     public static MusicController instance;
 
-    public AudioMixer audioMixer;
-    public AudioMixerGroup musicGroup;
+    [SerializeField] AudioMixerGroup musicGroup;
     AudioSource audioSource;
     AudioSource secondaryAudioSource;
 
-    public AudioClip[] tracks;
+    [SerializeField] AudioClip[] tracks;
     int currentTrack;
 
     [Tooltip("When enabled, loops the same track. When disabled, loops through the whole playlist.")]
@@ -114,12 +113,13 @@ public class MusicController : MonoBehaviour
     /// </summary>
     /// <param name="track">The AudioClip to shoehorn into the playlist.</param>
     /// <param name="timeToTransition">The time it'll take for the track to fade in.</param>
+    /// <param name="loop">Loop the shoehorned track? Needs manual resetting after transition.</param>
     /// <param name="trackIndexToFollow">The index of the track to be played after the provided track finishes.</param>
-    public void ChangeTrack(AudioClip track, float timeToTransition = 0f, int trackIndexToFollow = -1)
+    public void ChangeTrack(AudioClip track, float timeToTransition = 0f, bool loop = false, int trackIndexToFollow = -1)
     {
         if (changingTracks) TransitionError();
         else if (trackIndexToFollow == -1) StartCoroutine(TransitionMusic(currentTrack, timeToTransition, track));
-        else StartCoroutine(TransitionMusic(trackIndexToFollow, timeToTransition, track));
+        else StartCoroutine(TransitionMusic(trackIndexToFollow, timeToTransition, track, loop));
     }
 
     void TransitionError()
@@ -127,13 +127,14 @@ public class MusicController : MonoBehaviour
         Debug.LogError($"A track transition is already taking place. Please wait at least {((int)((transitionTime + transitionDuration - Time.time) * 100f)) / 100f} seconds before starting a new transition.");
     }
 
-    IEnumerator TransitionMusic(int trackIndex, float timeToTransition, AudioClip track = null)
+    IEnumerator TransitionMusic(int trackIndex, float timeToTransition, AudioClip track = null, bool loop = false)
     {
         // Create a new AudioSource to play the new track.
         secondaryAudioSource = gameObject.AddComponent<AudioSource>();
         secondaryAudioSource.outputAudioMixerGroup = musicGroup;
         secondaryAudioSource.playOnAwake = false;
         secondaryAudioSource.volume = 0f;
+        secondaryAudioSource.loop = loop;
         if (track == null) secondaryAudioSource.clip = tracks[trackIndex];
         else secondaryAudioSource.clip = track;
         secondaryAudioSource.Play();

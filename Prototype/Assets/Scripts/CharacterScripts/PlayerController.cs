@@ -120,7 +120,7 @@ public class PlayerController : MonoBehaviour
 
 
         // Respawn player
-        if (transform.position.y < -30f)
+        if (transform.position.y < -70f)
         { 
             transform.position = SpawnPosition;
             transform.rotation = SpawnRotation;

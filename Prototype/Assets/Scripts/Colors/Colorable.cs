@@ -43,7 +43,7 @@ public class Colorable : MonoBehaviour
     private void Update()
     {
         // Respawn object if it fell off the map.
-        if (transform.position.y < -10)
+        if (transform.position.y < -53f)
         {
             rigidbody.velocity = Vector3.zero;
             rigidbody.angularVelocity = Vector3.zero;

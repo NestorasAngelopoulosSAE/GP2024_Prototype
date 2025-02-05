@@ -15,7 +15,7 @@ public class AudioSliders : MonoBehaviour
     public void SetSfxLvl(float sfxLvl)
     {
         masterMixer.SetFloat("SFXVolume", sfxLvl);
-        PlayerPrefs.SetFloat("sfxVolume", sfxLvl);
+        PlayerPrefs.SetFloat("SFXVolume", sfxLvl);
     }
    
     public void MusicLvl(float musicLvl)
@@ -34,12 +34,12 @@ public class AudioSliders : MonoBehaviour
     {   // Saving values
 
         //SFX
-        if (PlayerPrefs.HasKey("sfxVolume"))
+        if (PlayerPrefs.HasKey("SFXVolume"))
         {
             // set slider to player prefs value 
-            SFXSlider.value = PlayerPrefs.GetFloat("sfxVolume");
+            SFXSlider.value = PlayerPrefs.GetFloat("SFXVolume");
             // set mixer volume to player prefs value 
-            masterMixer.SetFloat("sfxVolume", SFXSlider.value);            
+            masterMixer.SetFloat("SFXVolume", SFXSlider.value);            
         }
 
         if (PlayerPrefs.HasKey("MasterVolume"))

@@ -36,6 +36,10 @@ public class RideTrigger : MonoBehaviour
         {
             OnTriggerExit(other);
         }
+        else if (other.GetComponent<Colorable>() && other.transform.parent != transform.parent)
+        {
+            OnTriggerEnter(other);
+        }
     }
 
     private void OnTriggerExit(Collider other)

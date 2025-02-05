@@ -36,7 +36,7 @@ public class Colorable : MonoBehaviour
 
         gameObject.tag = "Colorable";
         // Add a ride trigger so that a stack of objects can all move along with a moving platform.
-        CreateRideTriggerObject();
+        if (!GetComponentInChildren<RideTrigger>()) CreateRideTriggerObject();
         // Give object a helper script to manage the secondary light interactions with the toon shader.
         if (!GetComponent<ToonHelper>()) gameObject.AddComponent<ToonHelper>();
 

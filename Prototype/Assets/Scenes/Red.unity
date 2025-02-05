@@ -5926,7 +5926,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 634fa54a8854b5341bef82ddc2fdcebf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  WipeMaterial: {fileID: 0}
+  WipeMaterial: {fileID: 2100000, guid: 10374926e8879854f9ae91468d7396b6, type: 2}
 --- !u!1 &677172212
 GameObject:
   m_ObjectHideFlags: 0

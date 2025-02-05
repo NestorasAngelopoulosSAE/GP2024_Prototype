@@ -4,11 +4,11 @@ public class addForce : MonoBehaviour
 {
     [SerializeField] int speed = 10;
 
-    private void OnCollisionEnter(Collision other)
+    private void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.CompareTag("Colorable"))
+        if (other.CompareTag("Colorable") || other.CompareTag("Player"))
         {
-            other.gameObject.GetComponent<Rigidbody>().AddForce(Vector3.up + Vector3.right * speed , ForceMode.Impulse);
+            if (!other.GetComponent<Green>() && other.gameObject.layer != LayerMask.GetMask("Held Object")) other.transform.position += transform.right * speed * Time.deltaTime;
         }
     }
 }

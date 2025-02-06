@@ -11,6 +11,7 @@ public class ColorUnlock : MonoBehaviour
     ColorManager colorManager;
     public int IndexOfColorToUnlock;
     [SerializeField] Light MainLight;
+    [SerializeField] Light PedestalLight;
     [SerializeField] float lightTransitionSpeed = 1;
     float targetIntensity;
 
@@ -32,6 +33,7 @@ public class ColorUnlock : MonoBehaviour
             // Animate brush to switch to the new color.
             colorManager.selectedColor = IndexOfColorToUnlock;
             colorManager.brushAnimator.SetTrigger("Change");
+            PedestalLight.color = Color.black;
             onUnlock.Invoke();
         }
     }

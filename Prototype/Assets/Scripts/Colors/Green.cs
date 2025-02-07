@@ -21,7 +21,7 @@ public class Green : MonoBehaviour
 
         if (transform.parent != null && transform.parent.gameObject.GetComponent<Blue>())
         {
-            transform.position += Vector3.up * 0.01f; // Lift object so it doesn't overlap with a moving platform.
+            transform.position += Vector3.up * 0.02f; // Lift object so it doesn't overlap with a moving platform.
         }
 
         storedVelocity = rigidBody.velocity;

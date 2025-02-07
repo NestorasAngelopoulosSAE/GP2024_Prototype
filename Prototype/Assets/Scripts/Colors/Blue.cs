@@ -48,7 +48,7 @@ public class Blue : MonoBehaviour
         rigidBody = GetComponent<Rigidbody>();
 
         // Lift object so it doesn't overlap with the floor. (Helps with sweep test on top of weird geometries)
-        transform.position += Vector3.up * 0.01f;
+        transform.position += Vector3.up * 0.02f;
 
         // If a green object was on top of the platform when it became blue,
         Rigidbody sweepRigidBody = SweepTestRigidBody(thisCollider, Vector3.up, speed);
@@ -58,7 +58,7 @@ public class Blue : MonoBehaviour
             if (hit.collider.tag == "Colorable" && hit.collider.gameObject.GetComponent<Green>())
             {
                 // Lift it slightly higher than the platform, so that when the platform returns, it can pass under the green object.
-                hit.transform.position += Vector3.up * 0.02f;
+                hit.transform.position += Vector3.up * 0.04f;
             }
         }
         Destroy(sweepRigidBody.gameObject);

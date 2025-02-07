@@ -24,6 +24,8 @@ public class Colorable : MonoBehaviour
     Quaternion SpawnRotation;
     Rigidbody rb;
 
+    bool startKinematic;
+
     void Start()
     {
         meshRenderer = GetComponent<Renderer>();
@@ -45,6 +47,7 @@ public class Colorable : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         SpawnPosition = transform.position;
         SpawnRotation = transform.rotation;
+        startKinematic = rb.isKinematic;
     }
 
     private void Update()
@@ -54,6 +57,7 @@ public class Colorable : MonoBehaviour
         {
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = startKinematic;
 
             transform.position = SpawnPosition;
             transform.rotation = SpawnRotation;

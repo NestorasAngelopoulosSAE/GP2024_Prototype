@@ -867,6 +867,7 @@ GameObject:
   - component: {fileID: 7745928750689117626}
   - component: {fileID: 5157612161455153654}
   - component: {fileID: 2631865625754879863}
+  - component: {fileID: 1244972811220930349}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -969,3 +970,20 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.3
   m_Center: {x: 0, y: 0.1, z: 0}
+--- !u!114 &1244972811220930349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8707050101427967110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e8c86dcb0170df42b99751d77964ce8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  respawnPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  HeightThreshold: -30

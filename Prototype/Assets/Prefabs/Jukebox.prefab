@@ -44,9 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7cd23798d65bf9849b70e2ca6ed74b1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioMixer: {fileID: 24100000, guid: ab2cb8d099f93eb49841dbc81fdf59ca, type: 2}
   musicGroup: {fileID: -190543507034406991, guid: ab2cb8d099f93eb49841dbc81fdf59ca, type: 2}
   tracks:
-  - {fileID: 8300000, guid: 7df26758bacffe24a8c7c91c6934f362, type: 3}
-  - {fileID: 8300000, guid: c193cdceb3dadc548bc08184760dbd03, type: 3}
-  - {fileID: 8300000, guid: 7a7b68161e338b54d80f87343f693d89, type: 3}
+  - {fileID: 8300000, guid: 733bede6a7093d5449c9283b9ec95590, type: 3}
+  repeat: 0
+  shuffle: 0
+  paused: 0

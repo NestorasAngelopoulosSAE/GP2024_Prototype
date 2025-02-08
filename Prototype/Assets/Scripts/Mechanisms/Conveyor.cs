@@ -18,39 +18,18 @@ public class Conveyor : MonoBehaviour
 
     private void Start() => material = GetComponent<MeshRenderer>().material;
 
-    #region Colorable
-    // Push object while on conveyor.
-    private void OnCollisionStay(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Colorable") && !collision.gameObject.GetComponent<Green>() && collision.gameObject.layer != LayerMask.NameToLayer("Held Object"))
-        {
-            collision.transform.position += transform.right * forceSpeed * Time.deltaTime;
-        }
-    }
-
-    // Add to list for raycasting when exiting conveyor.
-    private void OnCollisionExit(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Colorable") && !collision.gameObject.GetComponent<Green>() && collision.gameObject.layer != LayerMask.NameToLayer("Held Object"))
-        {
-            targets.Add(collision.transform);
-        }
-    }
-    #endregion
-
-    #region Player
-    // Push player while in trigger.
+    // Push object while in trigger.
     private void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Player")) other.transform.position += transform.right * forceSpeed * Time.deltaTime;
-    }
+        if (!other.CompareTag("Player") && !other.CompareTag("Colorable")) return;
 
-    // Add to list for raycasting when exiting trigger.
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player")) targets.Add(other.transform);
+        bool foundInList = false;
+        foreach (Transform t in targets)
+        {
+            if (t == other.transform) foundInList = true;
+        }
+        if (!foundInList) targets.Add(other.transform);
     }
-    #endregion
 
     private void Update()
     {
@@ -61,6 +40,13 @@ public class Conveyor : MonoBehaviour
         // If object is no longer above the trigger, stop pushing it.
         for (int i = 0; i < targets.Count; i++)
         {
+            if (targets[i].GetComponent<Green>() || targets[i].gameObject.layer == LayerMask.NameToLayer("Held Object"))
+            {
+                targets.RemoveAt(i);
+                i--;
+                continue;
+            }
+
             if (Physics.Raycast(targets[i].position, Vector3.down, out RaycastHit hit, 2f))
             {
                 if (hit.collider.gameObject != gameObject)

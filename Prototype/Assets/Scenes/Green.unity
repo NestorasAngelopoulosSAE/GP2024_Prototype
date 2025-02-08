@@ -8701,7 +8701,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 1048529321}
-  m_VersionIndex: 9438
+  m_VersionIndex: 9441
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -10118,10 +10118,10 @@ GameObject:
   - component: {fileID: 500624781}
   - component: {fileID: 500624780}
   - component: {fileID: 500624785}
-  - component: {fileID: 500624787}
   - component: {fileID: 500624784}
   - component: {fileID: 500624786}
-  m_Layer: 9
+  - component: {fileID: 500624787}
+  m_Layer: 0
   m_Name: Conveyor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10221,12 +10221,12 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 1, z: 0.9}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &500624786
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10256,12 +10256,12 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 0.9}
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &523423983
 GameObject:
   m_ObjectHideFlags: 0
@@ -10732,6 +10732,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68c7d2b0adcd6f54188b3e424f820855, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  controlLights: 1
   IndexOfColorToUnlock: 1
   MainLight: {fileID: 1819074243}
   PedestalLight: {fileID: 1773652658}
@@ -13704,7 +13705,7 @@ PrefabInstance:
     - target: {fileID: 3974400149628006261, guid: 659e6e040a4bc0f428af96ac80e3afe6, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 97d8c7c367d819e44b8dc46d06473865, type: 2}
+      objectReference: {fileID: 2100000, guid: 5c97f352626f3c3428f43654815a138b, type: 2}
     - target: {fileID: 5482036739180238432, guid: 659e6e040a4bc0f428af96ac80e3afe6, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 

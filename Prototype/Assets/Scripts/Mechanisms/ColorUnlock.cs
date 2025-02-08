@@ -8,6 +8,7 @@ using UnityEngine.Events;
 
 public class ColorUnlock : MonoBehaviour
 {
+    [SerializeField] bool controlLights;
     ColorManager colorManager;
     public int IndexOfColorToUnlock;
     [SerializeField] Light MainLight;
@@ -20,6 +21,8 @@ public class ColorUnlock : MonoBehaviour
     private void Start()
     {
         colorManager = GameObject.FindWithTag("Gameplay Manager").GetComponent<ColorManager>();
+
+        if (!controlLights) return;
         targetIntensity = MainLight.intensity;
         MainLight.intensity = 0.2f;
     }
@@ -33,13 +36,15 @@ public class ColorUnlock : MonoBehaviour
             // Animate brush to switch to the new color.
             colorManager.selectedColor = IndexOfColorToUnlock;
             colorManager.brushAnimator.SetTrigger("Change");
-            PedestalLight.color = Color.black;
+            if (controlLights) PedestalLight.color = Color.black;
             onUnlock.Invoke();
         }
     }
 
     private void Update()
     {
+        if (!controlLights) return;
+
         if (colorManager.GameplayColors[IndexOfColorToUnlock].unlocked)
         {
             MainLight.intensity = Mathf.MoveTowards(MainLight.intensity, targetIntensity, lightTransitionSpeed * Time.deltaTime);

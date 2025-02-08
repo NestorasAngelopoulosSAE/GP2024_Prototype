@@ -17,6 +17,7 @@ public class BrushController : MonoBehaviour
     
     ColorManager colorManager;
     SkinnedMeshRenderer skinnedMeshRenderer;
+    int _Texture = Shader.PropertyToID("_Texture");
 
     [SerializeField] AudioMixerGroup SFXGroup;
     AudioSource audioSource;
@@ -42,13 +43,13 @@ public class BrushController : MonoBehaviour
 
     public void ChangeColor()
     {
-        skinnedMeshRenderer.material.SetTexture("_Texture", Textures[colorManager.selectedColor]); // Set brush color
+        skinnedMeshRenderer.material.SetTexture(_Texture, Textures[colorManager.selectedColor]); // Set brush color
         Crosshair.color = colorManager.GameplayColors[colorManager.selectedColor].color; // Set crosshair color
     }
 
     private void OnApplicationQuit()
     {
-        skinnedMeshRenderer.material.SetTexture("_Texture", defaultTexture); // Reset texture to be blank when not in playmode
+        skinnedMeshRenderer.material.SetTexture(_Texture, defaultTexture); // Reset texture to be blank when not in playmode
     }
 
     public void PlayWhooshSound(float basePitch)

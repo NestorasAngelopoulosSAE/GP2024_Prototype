@@ -14,6 +14,7 @@ public class Splat : MonoBehaviour
     public Texture2D emptyTexture;
     public Texture2D brushTexture;
     public Material splatMaterial;
+    int _Texture = Shader.PropertyToID("_Splat_Texture");
 
     [SerializeField] bool AllowColorMixing;
 
@@ -76,7 +77,7 @@ public class Splat : MonoBehaviour
                 MeshRenderer meshRenderer = hit.transform.GetComponent<MeshRenderer>();
 
                 // Get already applied texture.
-                Texture2D tex = meshRenderer.material.GetTexture("_Splat_Texture") as Texture2D;
+                Texture2D tex = meshRenderer.material.GetTexture(_Texture) as Texture2D;
                 if (tex == emptyTexture) // If a texture hasn't been created,
                 {
                     if (color == Color.clear) return; // Return if this won't have any effect on the object.
@@ -93,7 +94,7 @@ public class Splat : MonoBehaviour
                     // Make sure it's sharp and doesn't repeat at the edges.
                     tex.filterMode = FilterMode.Point;
                     tex.wrapMode = TextureWrapMode.Clamp;
-                    meshRenderer.material.SetTexture("_Splat_Texture", tex);
+                    meshRenderer.material.SetTexture(_Texture, tex);
                 }
 
                 // Get UV point corresponding to hit point.

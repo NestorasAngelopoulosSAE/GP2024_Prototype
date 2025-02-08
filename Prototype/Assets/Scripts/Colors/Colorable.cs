@@ -12,10 +12,14 @@ using UnityEngine.Audio;
 public class Colorable : MonoBehaviour
 {
     ColorManager colorManager;
-    Renderer meshRenderer;
     AudioSource audioSource;
     [SerializeField] AudioMixerGroup SFXGroup;
     [SerializeField] AudioClip respawnSound;
+    Renderer meshRenderer;
+    int _Threshold = Shader.PropertyToID("_Threshold");
+    int _InsideColor = Shader.PropertyToID("_Inside_Color");
+    int _OusideColor = Shader.PropertyToID("_Outside_Color");
+    int _HitPosition = Shader.PropertyToID("_Hit_Position");
 
     float threshold;
     float speed = 5;
@@ -68,7 +72,7 @@ public class Colorable : MonoBehaviour
     private void LateUpdate()
     {
         threshold += Time.deltaTime * speed;
-        meshRenderer.material.SetFloat("_Threshold", threshold);
+        meshRenderer.material.SetFloat(_Threshold, threshold);
     }
 
     public void SetColor(GameplayColor newColor, bool clearColor, Vector3 hitPosition)
@@ -84,10 +88,10 @@ public class Colorable : MonoBehaviour
 
         if (clearColor) // Update the shader.
         {
-            Color lastColor = meshRenderer.material.GetColor("_Inside_Color");
-            meshRenderer.material.SetColor("_Inside_Color", newColor.color);
-            meshRenderer.material.SetColor("_Outside_Color", lastColor);
-            meshRenderer.material.SetVector("_Hit_Position", transform.InverseTransformPoint(hitPosition));
+            Color lastColor = meshRenderer.material.GetColor(_InsideColor);
+            meshRenderer.material.SetColor(_InsideColor, newColor.color);
+            meshRenderer.material.SetColor(_OusideColor, lastColor);
+            meshRenderer.material.SetVector(_HitPosition, transform.InverseTransformPoint(hitPosition));
             threshold = 0;
         }
     }

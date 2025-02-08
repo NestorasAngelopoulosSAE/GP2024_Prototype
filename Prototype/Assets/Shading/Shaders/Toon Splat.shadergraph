@@ -1018,6 +1018,9 @@
             "m_Id": "3fd0aa981f4443f7b40650650fcd686e"
         },
         {
+            "m_Id": "9e4543f7920e49e58763ef7e249d15a9"
+        },
+        {
             "m_Id": "49d4590eefd447799c4bfa27ff57295e"
         },
         {
@@ -1056,7 +1059,8 @@
         "860804c2-5551-47c0-8d9d-be6a5bd96c27",
         "532b8ed0-c485-4f0b-a2c6-b7812df2a73c",
         "5702b1f2-aa3f-467f-8478-252895c48f84",
-        "9804dfa3-3afa-4766-a3fc-085e64429484"
+        "9804dfa3-3afa-4766-a3fc-085e64429484",
+        "66e0cd52-c8cc-4849-b08f-9068b978e1a4"
     ],
     "m_PropertyIds": [
         -1408743307,
@@ -1066,7 +1070,8 @@
         -1944447675,
         -1590657318,
         -1109940260,
-        100555678
+        100555678,
+        -489098601
     ],
     "m_Dropdowns": [],
     "m_DropdownSelectedEntries": []
@@ -1342,6 +1347,29 @@
         "y": 0.0,
         "z": 0.0,
         "w": 0.0
+    },
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector3MaterialSlot",
+    "m_ObjectId": "9e4543f7920e49e58763ef7e249d15a9",
+    "m_Id": -489098601,
+    "m_DisplayName": "Texture Offset",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "_Texture_Offset",
+    "m_StageCapability": 2,
+    "m_Value": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "m_DefaultValue": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
     },
     "m_Labels": []
 }

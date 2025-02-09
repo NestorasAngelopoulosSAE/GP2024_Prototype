@@ -1,5 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
+/// <summary>
+/// Thamnopoulos Thanos + Nestoras Angelopoulos 2024
+/// 
+/// Menu Audio sliders
+/// </summary>
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;

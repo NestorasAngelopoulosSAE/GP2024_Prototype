@@ -1,3 +1,8 @@
+/// <summary>
+/// Thamnopoulos Thanos 2024
+/// 
+/// Display settings
+/// </summary>
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
